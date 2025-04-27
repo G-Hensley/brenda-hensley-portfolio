@@ -115,6 +115,6 @@ describe('Project Model', () => {
     const project = new Project(projectData);
 
     // Validate the project (should fail because projectName is missing)
-    await expect(project.validate()).rejects.toThrow('Project name is required');
+    await expect(project.validate()).rejects.toThrow('projectName is required');
   });
 });
