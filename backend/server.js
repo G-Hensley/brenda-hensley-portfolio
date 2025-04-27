@@ -1,6 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import csurf from 'csurf';
+import sanitize from 'mongo-sanitize';
 
 // Load environment variables
 dotenv.config();
@@ -10,10 +14,18 @@ const app = express();
 // Define the port
 const port = process.env.PORT || 3001;
 
-let dbConnected = false;
+// Set up Middleware
+app.use(helmet());
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(express.json());
+app.use(csurf());
+app.use((req, res, next) => {
+    req.body = sanitize(req.body);
+    next();
+});
 
 // Set up the database connection
-const db = mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to DB');
     dbConnected = true;
@@ -24,10 +36,11 @@ const db = mongoose.connect(process.env.MONGODB_URI)
 
 // Set up /api/health route to check if the server is running
 app.get('/api/health', (req, res) => {
-    if (res.statusCode === 200 && dbConnected) {
-        res.json({ status: 'OK', "Connection to DB": dbConnected });
+    const mongoStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+    if (mongoStatus === 'Connected') {
+        res.json({ status: 'OK', mongoStatus });
     } else {
-        res.status(500).json({ status: 'ERROR', "Connection to DB": dbConnected });
+        res.status(500).json({ status: 'ERROR', mongo: mongoStatus });
     }
 });
 
