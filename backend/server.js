@@ -50,6 +50,7 @@ app.get('/api/health', (req, res) => {
 // Start the server
 let server;
 
+// Start the server if not in test mode
 if (process.env.NODE_ENV !== 'test') {
   server = app.listen(port || 3001, () => {
     console.log(`Server is running on port ${port || 3001}`);
