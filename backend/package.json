@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --watch server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +23,12 @@
     "mongoose": "^8.14.0",
     "oauth": "^0.10.2",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "supertest": "^7.1.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "babel-jest": "^29.7.0",
+    "cross-env": "^7.0.3"
   }
 }

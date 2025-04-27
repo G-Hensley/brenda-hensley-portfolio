@@ -18,35 +18,44 @@ const port = process.env.PORT || 3001;
 app.use(helmet());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.json());
-app.use(csurf());
 app.use((req, res, next) => {
-    req.body = sanitize(req.body);
-    next();
+  req.body = sanitize(req.body);
+  next();
 });
 
 // Set up the database connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('Connected to DB');
-    dbConnected = true;
-  })
-  .catch((err) => {
-    console.log('Error connecting to DB', err);
-  });
+if (process.env.NODE_ENV !== 'test') {
+  mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+      console.error('Error connecting to MongoDB', error);
+      process.exit(1);
+    });
+}
 
 // Set up /api/health route to check if the server is running
 app.get('/api/health', (req, res) => {
-    const mongoStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
-    if (mongoStatus === 'Connected') {
-        res.json({ status: 'OK', message: 'MongoDB connected'});
-    } else {
-        res.status(500).json({ status: 'ERROR', message: 'MongoDB disconnected'});
-    }
+  if (mongoose.connection.readyState === 1) {
+    res.status(200).json({ status: 'ok' });
+  } else {
+    res
+      .status(500)
+      .json({ status: 'error', message: 'Database not connected' });
+  }
 });
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+let server;
 
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(port || 3001, () => {
+    console.log(`Server is running on port ${port || 3001}`);
+    connectDB();
+  });
+}
 
+// Export the app and server
+export default app;
