@@ -38,9 +38,9 @@ mongoose.connect(process.env.MONGODB_URI)
 app.get('/api/health', (req, res) => {
     const mongoStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
     if (mongoStatus === 'Connected') {
-        res.json({ status: 'OK', mongoStatus });
+        res.json({ status: 'OK', message: 'MongoDB connected'});
     } else {
-        res.status(500).json({ status: 'ERROR', mongo: mongoStatus });
+        res.status(500).json({ status: 'ERROR', message: 'MongoDB disconnected'});
     }
 });
 
