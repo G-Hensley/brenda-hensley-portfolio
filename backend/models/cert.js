@@ -10,10 +10,14 @@ const certSchema = new mongoose.Schema({
     required: true,
   },
   description: {
-    type: String,
+    type: [String],
     required: true,
-  }
-})
+  },
+  dateAcquired: {
+    type: Date,
+    required: true,
+  },
+});
 
 const Cert = mongoose.model('Cert', certSchema);
 
