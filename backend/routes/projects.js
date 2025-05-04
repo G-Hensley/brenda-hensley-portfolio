@@ -1,5 +1,6 @@
 import express from 'express';
 import Project from '../models/project.js';
+import authenticate from '../middlewares/auth.js';
 
 // Create a router to handle project routes
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get('/', async (req, res) => {
 });
 
 // Admin Route - Create new project
-router.post('/admin', async (req, res) => {
+router.post('/admin', authenticate, async (req, res) => {
   // Get the project data from the body request
   const { projectName, projectImage, description, projectLink } = req.body;
 
@@ -40,7 +41,7 @@ router.post('/admin', async (req, res) => {
 });
 
 // Admin Route - Update project by id
-router.put('/admin/:id', async (req, res) => {
+router.put('/admin/:id', authenticate, async (req, res) => {
 
   // Get the project data from the body request
   const { projectName, projectImage, description, projectLink } = req.body;
@@ -57,7 +58,7 @@ router.put('/admin/:id', async (req, res) => {
 });
 
 // Admin Route - Delete project by id
-router.delete('/admin/:id', async (req, res) => {
+router.delete('/admin/:id', authenticate, async (req, res) => {
 
   // Try to delete the project
   try {

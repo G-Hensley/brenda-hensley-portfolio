@@ -1,6 +1,7 @@
 // Route for skills to get, create, update, and delete skills
 import express from 'express';
 import Skill from '../models/skill.js';
+import authenticate from '../middlewares/auth.js';
 
 // Create a router to handle skill routes
 const router = express.Router();
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new skill - Admin Route
-router.post('/admin', async (req, res) => {
+router.post('/admin', authenticate, async (req, res) => {
   // Get the skill data from the request body
   const { skillName } = req.body;
 
@@ -36,7 +37,7 @@ router.post('/admin', async (req, res) => {
 });
 
 // Update a skill by id - Admin Route
-router.put('/admin/:id', async (req, res) => {
+router.put('/admin/:id', authenticate, async (req, res) => {
   // Get the skill data from the request body
   const { skillName } = req.body;
 
@@ -56,7 +57,7 @@ router.put('/admin/:id', async (req, res) => {
 });
 
 // Delete a skill by id - Admin Route
-router.delete('/admin/:id', async (req, res) => {
+router.delete('/admin/:id', authenticate, async (req, res) => {
   // Get the skill id from the request params
   const { id } = req.params;
 
