@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import Cert from '../models/cert';
 
 // Mock mongoose to simulate database behavior without actually connecting to MongoDB

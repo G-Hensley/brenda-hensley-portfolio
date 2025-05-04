@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const certSchema = new mongoose.Schema({
+const certSchema = new Schema({
   certName: {
     type: String,
     required: true,
@@ -19,6 +19,6 @@ const certSchema = new mongoose.Schema({
   },
 });
 
-const Cert = mongoose.model('Cert', certSchema);
+const Cert = model('Cert', certSchema);
 
 export default Cert;
