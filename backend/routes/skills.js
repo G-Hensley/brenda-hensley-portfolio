@@ -27,7 +27,7 @@ router.post('/admin', async (req, res) => {
   try {
     const newSkill = new Skill({ skillName });
     const savedSkill = await newSkill.save();
-    res.status(201).json(savedSkill);
+    res.status(201).json({ message: 'Skill created successfully', skill: savedSkill });
   } catch (error) {
     res
       .status(500)
@@ -47,7 +47,7 @@ router.put('/admin/:id', async (req, res) => {
       { skillName },
       { new: true }
     );
-    res.status(200).json(updatedSkill);
+    res.status(200).json({ message: 'Skill updated successfully', skill: updatedSkill });
   } catch (error) {
     res
       .status(500)

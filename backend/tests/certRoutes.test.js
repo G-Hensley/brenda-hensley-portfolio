@@ -10,7 +10,7 @@ dotenv.config();
 describe('GET /api/certs', () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_TEST_URI);
   });
 
   // Close database connection after tests
@@ -31,7 +31,7 @@ describe('GET /api/certs', () => {
 describe('POST /api/certs/admin', () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_TEST_URI);
   });
 
   // Close database connection after tests  
@@ -69,7 +69,7 @@ describe('POST /api/certs/admin', () => {
 describe('PUT /api/certs/admin/:id', () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_TEST_URI);
   });
 
   // Close database connection after tests
@@ -94,7 +94,7 @@ describe('PUT /api/certs/admin/:id', () => {
 describe('DELETE /api/certs/admin/:id', () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_TEST_URI);
   });
 
   // Close database connection after tests
