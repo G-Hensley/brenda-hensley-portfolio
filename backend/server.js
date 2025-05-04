@@ -5,14 +5,13 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import csurf from 'csurf';
 import sanitize from 'mongo-sanitize';
+import routes from './routes.js';
 
 // Load environment variables
 dotenv.config();
 
 // Create the express app
 const app = express();
-// Define the port
-const port = process.env.PORT || 3001;
 
 // Set up Middleware
 app.use(helmet());
@@ -22,6 +21,12 @@ app.use((req, res, next) => {
   req.body = sanitize(req.body);
   next();
 });
+
+// Use the routes
+app.use('/api', routes);
+
+// Define the port
+const port = process.env.PORT || 3001;
 
 // Set up the database connection
 if (process.env.NODE_ENV !== 'test') {
@@ -47,14 +52,10 @@ app.get('/api/health', (req, res) => {
   }
 });
 
-// Start the server
-let server;
-
 // Start the server if not in test mode
 if (process.env.NODE_ENV !== 'test') {
-  server = app.listen(port || 3001, () => {
+  app.listen(port || 3001, () => {
     console.log(`Server is running on port ${port || 3001}`);
-    connectDB();
   });
 }
 
