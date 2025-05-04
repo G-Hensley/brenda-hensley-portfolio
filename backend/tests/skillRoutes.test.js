@@ -4,6 +4,10 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import getTestToken from '../utils/authHelper.js';
 
+// Set test environment variables
+process.env.JWT_SECRET = 'test_secret_key_for_jwt';
+process.env.MONGODB_URI = 'mongodb://localhost:27017/portfolio_test';
+
 // Load environment variables
 dotenv.config();
 
@@ -14,7 +18,7 @@ const token = getTestToken();
 describe('GET /api/skills', () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_TEST_URI);
+    await mongoose.connect(process.env.MONGODB_URI);
   });
 
   // Close database connection after tests
@@ -35,7 +39,7 @@ describe('GET /api/skills', () => {
 describe('POST /api/skills/admin', () => {
   // Connect to test database before running tests
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_TEST_URI);
+    await mongoose.connect(process.env.MONGODB_URI);
   });
 
   // Close database connection after tests
@@ -47,7 +51,7 @@ describe('POST /api/skills/admin', () => {
   it('should create a new skill', async () => {
     const response = await request(app)
       .post('/api/skills/admin')
-      .set('Authorization', `${token}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({
         skillName: 'Test Skill',
       });
@@ -60,7 +64,7 @@ describe('POST /api/skills/admin', () => {
   it('should return an error if the skill name is not provided', async () => {
     const response = await request(app)
       .post('/api/skills/admin')
-      .set('Authorization', `${token}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({
         skillName: '',
       });
