@@ -38,7 +38,7 @@ router.put('/admin/:id', async (req, res) => {
     // Try to update the cert
     try {
         const updatedCert = await Cert.findByIdAndUpdate(req.params.id, { certName, certImage, description, dateAcquired }, { new: true });
-        res.status(200).json(updatedCert);
+        res.status(200).json({ message: 'Cert updated successfully', cert: updatedCert });
     } catch (error) {
         res.status(500).json({ message: 'Error updating cert', error: error.message });
     }
