@@ -24,7 +24,7 @@ router.post('/admin', async (req, res) => {
     try {
         const newCert = new Cert({ certName, certImage, description, dateAcquired });
         const savedCert = await newCert.save();
-        res.status(201).json(savedCert);
+        res.status(201).json({ message: 'Cert added successfully', cert: savedCert });
     } catch (error) {
         res.status(500).json({ message: 'Error creating cert', error: error.message });
     }
