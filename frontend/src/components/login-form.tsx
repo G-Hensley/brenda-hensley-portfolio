@@ -36,7 +36,7 @@ export function LoginForm({ className, providers, ...props }: LoginFormProps) {
                     variant='outline'
                     size='lg'
                     className='w-full bg-neutral-800 hover:bg-neutral-500 cursor-pointer'
-                    onClick={() => signIn(provider.id)}>
+                    onClick={() => signIn(provider.id, { callbackUrl: '/admin' })}>
                     {provider.name === 'GitHub' ? (
                       <div className='flex items-center gap-2'>
                         <FaGithub size={28}/>
