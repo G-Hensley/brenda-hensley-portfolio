@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 import { ClientSafeProvider } from 'next-auth/react';
 import { signIn } from 'next-auth/react';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaGoogle } from 'react-icons/fa';
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<'div'> {
   providers: Record<string, ClientSafeProvider> | null;
@@ -43,7 +43,10 @@ export function LoginForm({ className, providers, ...props }: LoginFormProps) {
                         <p>GitHub</p>
                       </div>
                     ) : (
-                      provider.name
+                      <div className='flex items-center gap-2'>
+                        <FaGoogle size={28}/>
+                        <p>Google</p>
+                      </div>
                     )}
                   </Button>
                 ))}

@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn, getProviders } from 'next-auth/react';
+import { getProviders } from 'next-auth/react';
 import type { ClientSafeProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { LoginForm } from '@/components/login-form';
