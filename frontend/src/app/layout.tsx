@@ -1,19 +1,22 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: "Brenda Hensley - Cybersecurity",
+  title: 'Brenda Hensley - Cybersecurity',
   description: "Brenda Hensley's Cybersecurity Portfolio",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`antialiased`}>{children}</body>
+    <html lang='en'>
+      <body className={`antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
