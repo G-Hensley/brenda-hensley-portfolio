@@ -32,13 +32,8 @@ const port = process.env.PORT || 3001;
 if (process.env.NODE_ENV !== 'test') {
   mongoose
     .connect(process.env.MONGODB_URI)
-    .then(() => {
-      console.log('Connected to MongoDB');
-    })
-    .catch((error) => {
-      console.error('Error connecting to MongoDB', error);
-      process.exit(1);
-    });
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 }
 
 // Set up /api/health route to check if the server is running
@@ -59,5 +54,4 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-// Export the app and server
 export default app;

@@ -57,8 +57,9 @@ router.put('/admin/:id', async (req, res) => {
 
 // Delete a skill by id - Admin Route
 router.delete('/admin/:id', async (req, res) => {
+  // Get the skill id from the request params
   const { id } = req.params;
-  console.log(id);
+
   // Try to delete the skill
   try {
     await Skill.findByIdAndDelete(id);
