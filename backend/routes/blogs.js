@@ -1,5 +1,6 @@
 import express from 'express';
 import Blog from '../models/blog.js';
+import authenticate from '../middlewares/auth.js';
 
 // Create a router to handle blog routes
 const router = express.Router();
@@ -17,7 +18,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new blog - Admin Route
-router.post('/admin', async (req, res) => {
+router.post('/admin', authenticate, async (req, res) => {
   // Get the blog data from the request body
   const { title, content, image, dateCreated } = req.body;
 
@@ -32,7 +33,7 @@ router.post('/admin', async (req, res) => {
 });
 
 // Update a blog by id - Admin Route
-router.put('/admin/:id', async (req, res) => {
+router.put('/admin/:id', authenticate, async (req, res) => {
   // Get the blog data from the request body
   const { title, content, image, dateCreated } = req.body;
 
@@ -46,7 +47,7 @@ router.put('/admin/:id', async (req, res) => {
 });
 
 // Delete a blog by id - Admin Route
-router.delete('/admin/:id', async (req, res) => {
+router.delete('/admin/:id', authenticate, async (req, res) => {
   // Get the blog id from the request params
   const { id } = req.params;
 

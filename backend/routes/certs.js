@@ -1,5 +1,6 @@
 import express from 'express';
 import Cert from '../models/cert.js';
+import authenticate from '../middlewares/auth.js';
 
 // Create a router to handle cert routes
 const router = express.Router();
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new cert - Admin Route
-router.post('/admin', async (req, res) => {
+router.post('/admin', authenticate, async (req, res) => {
   // Get the cert data from the request body
     const { certName, certImage, description, dateAcquired } = req.body;
 
@@ -31,21 +32,21 @@ router.post('/admin', async (req, res) => {
 });
 
 // Update a cert by id - Admin Route
-router.put('/admin/:id', async (req, res) => {
+router.put('/admin/:id', authenticate, async (req, res) => {
   // Get the cert data from the request body
     const { certName, certImage, description, dateAcquired } = req.body;
 
     // Try to update the cert
     try {
         const updatedCert = await Cert.findByIdAndUpdate(req.params.id, { certName, certImage, description, dateAcquired }, { new: true });
-        res.status(200).json(updatedCert);
+        res.status(200).json({ message: 'Cert updated successfully', cert: updatedCert });
     } catch (error) {
         res.status(500).json({ message: 'Error updating cert', error: error.message });
     }
 });
 
 // Delete a cert by id - Admin Route
-router.delete('/admin/:id', async (req, res) => {
+router.delete('/admin/:id', authenticate, async (req, res) => {
   // Get the cert id from the request params
     const { id } = req.params;
 
