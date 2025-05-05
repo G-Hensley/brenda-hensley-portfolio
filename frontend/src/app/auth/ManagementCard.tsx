@@ -28,7 +28,7 @@ export function ManagementCard({ title }: { title: string }) {
               <TableCell>Java is a programming language that is used to create software and applications.</TableCell>
               <TableCell className="flex gap-2">
                 <Button className="bg-neutral-500 text-white hover:bg-neutral-600 cursor-pointer">Edit</Button>
-                <Button className="bg-red-500 text-white hover:bg-red-600 cursor-pointer">Delete</Button>
+                <Button className="bg-red-800 text-white hover:bg-red-900 cursor-pointer">Delete</Button>
               </TableCell>
             </TableRow>
             <TableRow>
