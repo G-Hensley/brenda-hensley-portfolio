@@ -10,7 +10,9 @@ router.get('/', async (req, res) => {
   // Try to get all projects from the database
   try {
     const projects = await Project.find();
-    res.status(200).json(projects);
+    res
+      .status(200)
+      .json({ message: 'Projects fetched successfully', projects });
   } catch (error) {
     res
       .status(500)
@@ -42,13 +44,16 @@ router.post('/admin', authenticate, async (req, res) => {
 
 // Admin Route - Update project by id
 router.put('/admin/:id', authenticate, async (req, res) => {
-
   // Get the project data from the body request
   const { projectName, projectImage, description, projectLink } = req.body;
 
   // Try to update the project
   try {
-    const updatedProject = await Project.findByIdAndUpdate(req.params.id, { projectName, projectImage, description, projectLink }, { new: true });
+    const updatedProject = await Project.findByIdAndUpdate(
+      req.params.id,
+      { projectName, projectImage, description, projectLink },
+      { new: true }
+    );
     res.status(200).json(updatedProject);
   } catch (error) {
     res
@@ -59,7 +64,6 @@ router.put('/admin/:id', authenticate, async (req, res) => {
 
 // Admin Route - Delete project by id
 router.delete('/admin/:id', authenticate, async (req, res) => {
-
   // Try to delete the project
   try {
     await Project.findByIdAndDelete(req.params.id);
@@ -70,6 +74,5 @@ router.delete('/admin/:id', authenticate, async (req, res) => {
       .json({ message: 'Error deleting project', error: error.message });
   }
 });
-
 
 export default router;

@@ -22,11 +22,11 @@ router.get('/', async (req, res) => {
 // Create a new skill - Admin Route
 router.post('/admin', authenticate, async (req, res) => {
   // Get the skill data from the request body
-  const { skillName } = req.body;
+  const { title } = req.body;
 
   // Try to create a new skill
   try {
-    const newSkill = new Skill({ skillName });
+    const newSkill = new Skill({ title });
     const savedSkill = await newSkill.save();
     res.status(201).json({ message: 'Skill created successfully', skill: savedSkill });
   } catch (error) {
@@ -39,13 +39,13 @@ router.post('/admin', authenticate, async (req, res) => {
 // Update a skill by id - Admin Route
 router.put('/admin/:id', authenticate, async (req, res) => {
   // Get the skill data from the request body
-  const { skillName } = req.body;
+  const { title } = req.body;
 
   // Try to update the skill
   try {
     const updatedSkill = await Skill.findByIdAndUpdate(
       req.params.id,
-      { skillName },
+      { title },
       { new: true }
     );
     res.status(200).json({ message: 'Skill updated successfully', skill: updatedSkill });

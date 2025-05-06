@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const projectSchema = new Schema({
-  projectName: {
+  title: {
     type: String,
     required: true,
   },

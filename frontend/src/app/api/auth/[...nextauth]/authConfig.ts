@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import type { AuthOptions } from 'next-auth';
 import type { User } from 'next-auth';
 import type { Session } from 'next-auth';
+import { sign } from 'jsonwebtoken';
 
 export const authConfig: AuthOptions = {
   providers: [
@@ -27,6 +28,19 @@ export const authConfig: AuthOptions = {
       return user.email ? allowedEmails.includes(user.email) : false;
     },
     async session({ session }: { session: Session }) {
+      if (session.user) {
+        const token = sign(
+          {
+            email: session.user.email,
+            name: session.user.name,
+            role: 'admin',
+          },
+          process.env.NEXTAUTH_SECRET || 'your-secret-key',
+          { expiresIn: '1h' }
+        );
+        console.log('Generated token:', token);
+        session.user.token = token;
+      }
       return session;
     },
   },
