@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import csurf from 'csurf';
 import sanitize from 'mongo-sanitize';
 import routes from './routes.js';
+import cors from 'cors';
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +16,12 @@ const app = express();
 
 // Set up Middleware
 app.use(helmet());
+app.use(cors({
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.json());
 app.use((req, res, next) => {

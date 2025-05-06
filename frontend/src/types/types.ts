@@ -1,13 +1,13 @@
 // Skill interface
 export interface Skill {
-  _id: string;
-  skillName: string;
+  _id?: string;
+  title: string;
 }
 
 // Project interface
 export interface Project {
   _id: string;
-  projectName: string;
+  title: string;
   projectImage: string;
   description: string;
   projectLink: string;
@@ -16,9 +16,9 @@ export interface Project {
 // Certification interface
 export interface Certification {
   _id: string;
-  certName: string;
+  title: string;
   certImage: string;
-  description: string;
+  description: string[];
   dateAcquired: string;
 }
 

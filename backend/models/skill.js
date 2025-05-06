@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 const skillSchema = new Schema({
-  skillName: {
+  title: {
     type: String,
     required: true,
   }
