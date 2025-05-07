@@ -19,11 +19,11 @@ router.get('/', async (req, res) => {
 // Create a new cert - Admin Route
 router.post('/admin', authenticate, async (req, res) => {
   // Get the cert data from the request body
-    const { certName, certImage, description, dateAcquired } = req.body;
+    const { title, certImage, description, dateAcquired } = req.body;
 
     // Try to create a new cert
     try {
-        const newCert = new Cert({ certName, certImage, description, dateAcquired });
+        const newCert = new Cert({ title, certImage, description, dateAcquired });
         const savedCert = await newCert.save();
         res.status(201).json({ message: 'Cert added successfully', cert: savedCert });
     } catch (error) {
@@ -34,11 +34,11 @@ router.post('/admin', authenticate, async (req, res) => {
 // Update a cert by id - Admin Route
 router.put('/admin/:id', authenticate, async (req, res) => {
   // Get the cert data from the request body
-    const { certName, certImage, description, dateAcquired } = req.body;
+    const { title, certImage, description, dateAcquired } = req.body;
 
     // Try to update the cert
     try {
-        const updatedCert = await Cert.findByIdAndUpdate(req.params.id, { certName, certImage, description, dateAcquired }, { new: true });
+        const updatedCert = await Cert.findByIdAndUpdate(req.params.id, { title, certImage, description, dateAcquired }, { new: true });
         res.status(200).json({ message: 'Cert updated successfully', cert: updatedCert });
     } catch (error) {
         res.status(500).json({ message: 'Error updating cert', error: error.message });

@@ -6,30 +6,24 @@ dotenv.config();
 
 // Middleware to authenticate the user
 const authenticate = (req, res, next) => {
-  console.log('Auth Header:', req.headers.authorization);
-  console.log('NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET);
 
   // Get the token from the request header
   const authHeader = req.headers.authorization;
 
   // If the token is not provided, return a 401 error
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('No token or invalid format');
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
   // Extract the token from the Bearer string
   const token = authHeader.split(' ')[1];
-  console.log('Extracted token:', token);
 
   // Try to verify the token
   try {
     const user = jwt.verify(token, process.env.NEXTAUTH_SECRET);
-    console.log('Verified user:', user);
     req.user = user;
     next();
   } catch (error) {
-    console.error('Token verification error:', error.message);
     return res.status(401).json({ message: 'Unauthorized' });
   }
 };

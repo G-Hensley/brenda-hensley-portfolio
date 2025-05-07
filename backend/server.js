@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import csurf from 'csurf';
 import sanitize from 'mongo-sanitize';
 import routes from './routes.js';
 import cors from 'cors';

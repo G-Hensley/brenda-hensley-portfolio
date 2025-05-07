@@ -15,7 +15,7 @@ export interface Project {
 
 // Certification interface
 export interface Certification {
-  _id: string;
+  _id?: string;
   title: string;
   certImage: string;
   description: string[];

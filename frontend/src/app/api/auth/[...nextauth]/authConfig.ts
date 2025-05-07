@@ -38,7 +38,6 @@ export const authConfig: AuthOptions = {
           process.env.NEXTAUTH_SECRET || 'your-secret-key',
           { expiresIn: '1h' }
         );
-        console.log('Generated token:', token);
         session.user.token = token;
       }
       return session;

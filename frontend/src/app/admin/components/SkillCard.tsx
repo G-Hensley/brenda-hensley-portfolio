@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 
+// SkillCardProps is the props for the SkillCard component
 interface SkillCardProps {
   title: string;
   data: Skill[];
@@ -43,15 +44,19 @@ export function SkillCard({
   editItem,
   deleteItem,
 }: SkillCardProps) {
-  const [skillTitle, setSkillTitle] = useState<string>('');
+  // State variables for the component
+  const [AddableSkillTitle, setAddableSkillTitle] = useState<string>('');
+  const [EditableSkillTitle, setEditableSkillTitle] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Handle adding a skill
   const handleAddSkill = async () => {
     try {
-      if (skillTitle.trim()) {
-        await addItem({ title: skillTitle });
-        setSkillTitle('');
+      if (AddableSkillTitle.trim()) {
+        await addItem({ title: AddableSkillTitle });
+        setAddableSkillTitle('');
         setIsOpen(false);
         setError(null);
       }
@@ -60,12 +65,36 @@ export function SkillCard({
     }
   };
 
+  // Handle editing a skill
+  const handleEditSkill = async (skill: Skill) => {
+    const id = skill._id;
+    try {
+      if (EditableSkillTitle.trim()) {
+        const skill = {
+          _id: id,
+          title: EditableSkillTitle,
+        }
+        await editItem(skill);
+        setEditableSkillTitle('');
+        setIsEditOpen(false);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to edit skill');
+    }
+  };
+
+  // Handle deleting a skill
+  const handleDeleteSkill = async (id: string) => {
+    await deleteItem(id);
+  };
+
   return (
     <Card className='h-fit'>
       <CardHeader>
         <CardTitle className='text-xl'>{title}</CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Table for the skills */}
         <Table>
           <TableHeader>
             <TableRow>
@@ -78,14 +107,44 @@ export function SkillCard({
               <TableRow key={item._id}>
                 <TableCell>{item.title}</TableCell>
                 <TableCell className='flex gap-2'>
+                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
+                      Edit
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
+                    <DialogHeader>
+                      <DialogTitle>Edit Skill</DialogTitle>
+                      <DialogDescription>
+                        Edit the skill in the database.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className='grid gap-4 py-4'>
+                      <div className='grid grid-cols-4 items-center gap-4'>
+                        <Label htmlFor='title' className='text-right'>
+                          Title
+                        </Label>
+                        <Input
+                          id='title'
+                          value={EditableSkillTitle}
+                          className='col-span-3'
+                          onChange={(e) => setEditableSkillTitle(e.target.value)}
+                        />
+                      </div>
+                      {error && <div className='text-red-500 text-sm'>{error}</div>}
+                    </div>
+                    <DialogFooter>
+                      <Button type='submit' onClick={() => handleEditSkill(item)} className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                        Save changes
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
                   <Button
-                    className='bg-neutral-500 text-white hover:bg-neutral-600 cursor-pointer'
-                    onClick={() => editItem(item)}>
-                    Edit
-                  </Button>
-                  <Button
-                    className='bg-red-800 text-white hover:bg-red-900 cursor-pointer'
-                    onClick={() => deleteItem(item._id || '')}>
+                    className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'
+                    onClick={() => handleDeleteSkill(item._id || '')}>
                     Delete
                   </Button>
                 </TableCell>
@@ -93,13 +152,15 @@ export function SkillCard({
             ))}
           </TableBody>
         </Table>
+
       </CardContent>
+
       <CardFooter className='flex justify-center'>
+
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button
-              variant='outline'
-              className='bg-blue-800 text-white hover:bg-blue-900 cursor-pointer'>
+              className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
               Add
             </Button>
           </DialogTrigger>
@@ -117,21 +178,23 @@ export function SkillCard({
                 </Label>
                 <Input
                   id='title'
-                  value={skillTitle}
+                  value={AddableSkillTitle}
                   className='col-span-3'
-                  onChange={(e) => setSkillTitle(e.target.value)}
+                  onChange={(e) => setAddableSkillTitle(e.target.value)}
                 />
               </div>
               {error && <div className='text-red-500 text-sm'>{error}</div>}
             </div>
             <DialogFooter>
-              <Button type='submit' onClick={handleAddSkill}>
+              <Button type='submit' onClick={handleAddSkill} className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
                 Save changes
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
       </CardFooter>
+
     </Card>
   );
 }

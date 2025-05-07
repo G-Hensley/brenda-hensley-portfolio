@@ -36,9 +36,6 @@ export const addSkill = async (skill: Skill): Promise<Skill> => {
   const session = await getSession();
   const token = session?.user?.token;
 
-  console.log('Session:', session);
-  console.log('Token from session:', token);
-
   if (!token) {
     throw new Error('No authentication token found');
   }
@@ -79,26 +76,54 @@ export const addProject = async (project: Project): Promise<Project> => {
 export const addCertification = async (
   certification: Certification
 ): Promise<Certification> => {
-  const response = await fetch(`${baseUrl}/certs`, {
+  const session = await getSession();
+  const token = session?.user?.token;
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+  const response = await fetch(`${baseUrl}/certs/admin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(certification),
   });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Error response:', errorText);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
   const data = await response.json();
-  return data.certification;
+  return data.certs;
 };
 
 // Edit a skill in the database
 export const editSkill = async (skill: Skill): Promise<Skill> => {
-  const response = await fetch(`${baseUrl}/skills/${skill._id}`, {
+  const session = await getSession();
+  const token = session?.user?.token;
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
+  const response = await fetch(`${baseUrl}/skills/admin/${skill._id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(skill),
   });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Error response:', errorText);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
   const data = await response.json();
   return data.skill;
 };
@@ -133,8 +158,17 @@ export const editCertification = async (
 
 // Delete a skill from the database
 export const deleteSkill = async (id: string): Promise<void> => {
-  await fetch(`${baseUrl}/skills/${id}`, {
+  const session = await getSession();
+  const token = session?.user?.token;
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+  await fetch(`${baseUrl}/skills/admin/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
@@ -147,7 +181,17 @@ export const deleteProject = async (id: string): Promise<void> => {
 
 // Delete a certification from the database
 export const deleteCertification = async (id: string): Promise<void> => {
-  await fetch(`${baseUrl}/certs/${id}`, {
+  const session = await getSession();
+  const token = session?.user?.token;
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
+  await fetch(`${baseUrl}/certs/admin/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
