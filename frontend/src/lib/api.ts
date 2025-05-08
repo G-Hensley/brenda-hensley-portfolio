@@ -3,6 +3,16 @@ import { getSession } from 'next-auth/react';
 
 const baseUrl = 'http://localhost:4992/api';
 
+// Function to get the session token, test if it is valid, and return the token
+const getToken = async (): Promise<string> => {
+  const session = await getSession();
+  const token = session?.user?.token;
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+  return token;
+};
+
 // Get all skills from the database
 export const getSkills = async (): Promise<Skill[]> => {
   const response = await fetch(`${baseUrl}/skills`);
@@ -33,12 +43,7 @@ export const getBlogs = async (): Promise<Blog[]> => {
 
 // Add a new skill to the database
 export const addSkill = async (skill: Skill): Promise<Skill> => {
-  const session = await getSession();
-  const token = session?.user?.token;
-
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
+  const token = await getToken();
 
   const response = await fetch(`${baseUrl}/skills/admin`, {
     method: 'POST',
@@ -61,10 +66,13 @@ export const addSkill = async (skill: Skill): Promise<Skill> => {
 
 // Add a new project to the database
 export const addProject = async (project: Project): Promise<Project> => {
-  const response = await fetch(`${baseUrl}/projects`, {
+  const token = await getToken();
+
+  const response = await fetch(`${baseUrl}/projects/admin`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(project),
   });
@@ -76,8 +84,7 @@ export const addProject = async (project: Project): Promise<Project> => {
 export const addCertification = async (
   certification: Certification
 ): Promise<Certification> => {
-  const session = await getSession();
-  const token = session?.user?.token;
+  const token = await getToken();
 
   if (!token) {
     throw new Error('No authentication token found');
@@ -102,12 +109,7 @@ export const addCertification = async (
 
 // Edit a skill in the database
 export const editSkill = async (skill: Skill): Promise<Skill> => {
-  const session = await getSession();
-  const token = session?.user?.token;
-
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
+  const token = await getToken();
 
   const response = await fetch(`${baseUrl}/skills/admin/${skill._id}`, {
     method: 'PUT',
@@ -130,10 +132,13 @@ export const editSkill = async (skill: Skill): Promise<Skill> => {
 
 // Edit a project in the database
 export const editProject = async (project: Project): Promise<Project> => {
-  const response = await fetch(`${baseUrl}/projects/${project._id}`, {
+  const token = await getToken();
+
+  const response = await fetch(`${baseUrl}/projects/admin/${project._id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(project),
   });
@@ -145,10 +150,13 @@ export const editProject = async (project: Project): Promise<Project> => {
 export const editCertification = async (
   certification: Certification
 ): Promise<Certification> => {
-  const response = await fetch(`${baseUrl}/certs/${certification._id}`, {
+  const token = await getToken();
+
+  const response = await fetch(`${baseUrl}/certs/admin/${certification._id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(certification),
   });
@@ -158,12 +166,8 @@ export const editCertification = async (
 
 // Delete a skill from the database
 export const deleteSkill = async (id: string): Promise<void> => {
-  const session = await getSession();
-  const token = session?.user?.token;
+  const token = await getToken();
 
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
   await fetch(`${baseUrl}/skills/admin/${id}`, {
     method: 'DELETE',
     headers: {
@@ -174,19 +178,19 @@ export const deleteSkill = async (id: string): Promise<void> => {
 
 // Delete a project from the database
 export const deleteProject = async (id: string): Promise<void> => {
-  await fetch(`${baseUrl}/projects/${id}`, {
+  const token = await getToken();
+
+  await fetch(`${baseUrl}/projects/admin/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
 // Delete a certification from the database
 export const deleteCertification = async (id: string): Promise<void> => {
-  const session = await getSession();
-  const token = session?.user?.token;
-
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
+  const token = await getToken();
 
   await fetch(`${baseUrl}/certs/admin/${id}`, {
     method: 'DELETE',
