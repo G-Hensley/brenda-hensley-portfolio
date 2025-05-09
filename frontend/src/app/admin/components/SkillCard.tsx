@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/card';
 // Skill type import from types.ts to create the skill object
 import { Skill } from '@/types/types';
+// Import the getSkills, addSkill, editSkill and deleteSkill functions from the api.ts file
+import { getSkills, addSkill, editSkill, deleteSkill } from '@/lib/api';
 // Table component imports
 import {
   Table,
@@ -34,23 +36,17 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
+// Import the useMutation, useQuery and useQueryClient hooks from react-query
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // SkillCardProps is the props for the SkillCard component
 interface SkillCardProps {
   title: string;
-  data: Skill[];
-  addItem: (skill: Skill) => Promise<Skill>;
-  editItem: (skill: Skill) => Promise<Skill>;
-  deleteItem: (id: string) => Promise<void>;
 }
 
 // SkillCard component
 export function SkillCard({
-  title,
-  data,
-  addItem,
-  editItem,
-  deleteItem,
+  title
 }: SkillCardProps) {
 
   // State variables for the component
@@ -72,13 +68,40 @@ export function SkillCard({
   // currentSkill is the state variable for the current skill
   const [currentSkill, setCurrentSkill] = useState<string>('');
 
+  // queryClient is the query client
+  const queryClient = useQueryClient();
+
+  // useQuery hook to get the skills
+  const { data: skills, isLoading } = useQuery({
+    queryKey: ['skills'],
+    queryFn: getSkills,
+  });
+
+  // useMutation hook to add a skill
+  const addSkillMutation = useMutation({
+    mutationFn: addSkill,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skills'] }),
+  });
+
+  // useMutation hook to edit a skill
+  const editSkillMutation = useMutation({
+    mutationFn: editSkill,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skills'] }),
+  });
+
+  // useMutation hook to delete a skill
+  const deleteSkillMutation = useMutation({
+    mutationFn: deleteSkill,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skills'] }),
+  });
+
   // Handle adding a skill
   const handleAddSkill = async () => {
     // Try adding the skill
     try {
       // If the title is not empty, add the skill
       if (AddableSkillTitle.trim()) {
-        await addItem({ title: AddableSkillTitle });
+        await addSkillMutation.mutateAsync({ title: AddableSkillTitle });
         // Clear the addable skill title
         setAddableSkillTitle('');
         setIsOpen(false);
@@ -101,7 +124,7 @@ export function SkillCard({
           _id: id,
           title: EditableSkillTitle,
         }
-        await editItem(skill);
+        await editSkillMutation.mutateAsync(skill);
         setEditableSkillTitle('');
         setIsEditOpen(false);
       }
@@ -114,7 +137,7 @@ export function SkillCard({
   const handleDeleteSkill = async (id: string) => {
     // Try deleting the skill
     try {
-      await deleteItem(id);
+      await deleteSkillMutation.mutateAsync(id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete skill');
     }
@@ -122,112 +145,116 @@ export function SkillCard({
 
   return (
     <Card className='h-fit'>
-      <CardHeader>
-        <CardTitle className='text-xl'>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {/* Table for the skills */}
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((item: Skill) => (
-              <TableRow key={item._id}>
-                <TableCell>{item.title}</TableCell>
-                <TableCell className='flex gap-2'>
-                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      onClick={() => setCurrentSkill(item.title)}
-                      className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
-                    <DialogHeader>
-                      <DialogTitle>Edit Skill</DialogTitle>
-                      <DialogDescription>
-                        {`Edit the skill: "${currentSkill}" in the database.`}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className='grid gap-4 py-4'>
-                      <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label htmlFor='title' className='text-right'>
-                          Title
-                        </Label>
-                        <Input
-                          id='title'
-                          value={EditableSkillTitle}
-                          className='col-span-3'
-                          onChange={(e) => setEditableSkillTitle(e.target.value)}
-                          placeholder={currentSkill}
-                        />
-                      </div>
-                      {error && <div className='text-red-500 text-sm'>{error}</div>}
-                    </div>
-                    <DialogFooter>
-                      <Button type='submit' onClick={() => handleEditSkill(item)} className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-                        Save changes
+      {isLoading ? <p>Loading...</p> : (
+        <div>
+          <CardHeader>
+            <CardTitle className='text-xl'>{title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Table for the skills */}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {skills?.map((item: Skill) => (
+                  <TableRow key={item._id}>
+                    <TableCell>{item.title}</TableCell>
+                    <TableCell className='flex gap-2'>
+                    <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={() => setCurrentSkill(item.title)}
+                          className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
+                          Edit
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Edit Skill</DialogTitle>
+                          <DialogDescription>
+                            {`Edit the skill: "${currentSkill}" in the database.`}
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className='grid gap-4 py-4'>
+                          <div className='grid grid-cols-4 items-center gap-4'>
+                            <Label htmlFor='title' className='text-right'>
+                              Title
+                            </Label>
+                            <Input
+                              id='title'
+                              value={EditableSkillTitle}
+                              className='col-span-3'
+                              onChange={(e) => setEditableSkillTitle(e.target.value)}
+                              placeholder={currentSkill}
+                            />
+                          </div>
+                          {error && <div className='text-red-500 text-sm'>{error}</div>}
+                        </div>
+                        <DialogFooter>
+                          <Button type='submit' onClick={() => handleEditSkill(item)} className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                            Save changes
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                      <Button
+                        className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'
+                        onClick={() => handleDeleteSkill(item._id || '')}>
+                        Delete
                       </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                  <Button
-                    className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'
-                    onClick={() => handleDeleteSkill(item._id || '')}>
-                    Delete
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+          </CardContent>
+
+          <CardFooter className='flex justify-center'>
+
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                  Add
+                </Button>
+              </DialogTrigger>
+              <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
+                <DialogHeader>
+                  <DialogTitle>Add Skill</DialogTitle>
+                  <DialogDescription>
+                    Add a new skill to the database.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className='grid gap-4 py-4'>
+                  <div className='grid grid-cols-4 items-center gap-4'>
+                    <Label htmlFor='title' className='text-right'>
+                      Title
+                    </Label>
+                    <Input
+                      id='title'
+                      value={AddableSkillTitle}
+                      className='col-span-3'
+                      onChange={(e) => setAddableSkillTitle(e.target.value)}
+                    />
+                  </div>
+                  {error && <div className='text-red-500 text-sm'>{error}</div>}
+                </div>
+                <DialogFooter>
+                  <Button type='submit' onClick={handleAddSkill} className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                    Save changes
                   </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
-      </CardContent>
-
-      <CardFooter className='flex justify-center'>
-
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button
-              className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-              Add
-            </Button>
-          </DialogTrigger>
-          <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
-            <DialogHeader>
-              <DialogTitle>Add Skill</DialogTitle>
-              <DialogDescription>
-                Add a new skill to the database.
-              </DialogDescription>
-            </DialogHeader>
-            <div className='grid gap-4 py-4'>
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='title' className='text-right'>
-                  Title
-                </Label>
-                <Input
-                  id='title'
-                  value={AddableSkillTitle}
-                  className='col-span-3'
-                  onChange={(e) => setAddableSkillTitle(e.target.value)}
-                />
-              </div>
-              {error && <div className='text-red-500 text-sm'>{error}</div>}
-            </div>
-            <DialogFooter>
-              <Button type='submit' onClick={handleAddSkill} className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-                Save changes
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-      </CardFooter>
+          </CardFooter>
+        </div>
+      )}
 
     </Card>
   );

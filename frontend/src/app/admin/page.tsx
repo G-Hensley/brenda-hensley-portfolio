@@ -117,10 +117,6 @@ function AdminContent() {
       <div className='flex gap-12 flex-wrap justify-center p-8 rounded-lg'>
         <SkillCard
           title='Skills'
-          data={skillData}
-          addItem={handleAddSkill}
-          editItem={handleEditSkill}
-          deleteItem={handleDeleteSkill}
         />
         <ProjectCard
           title='Projects'
