@@ -1,5 +1,7 @@
 // Button component imports from shadcn/ui
 import { Button } from '@/components/ui/button';
+// Import toast from shadcn/ui
+import { toast } from 'sonner';
 // Card component imports from shadcn/ui
 import {
   Card,
@@ -38,6 +40,8 @@ import {
 import { useState } from 'react';
 // Import the useMutation, useQuery and useQueryClient hooks from react-query
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+// Import pulse loader from react-spinners
+import { PulseLoader } from 'react-spinners';
 
 // SkillCardProps is the props for the SkillCard component
 interface SkillCardProps {
@@ -80,19 +84,62 @@ export function SkillCard({
   // useMutation hook to add a skill
   const addSkillMutation = useMutation({
     mutationFn: addSkill,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skills'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      toast.success("Skill added successfully", {
+        description: "The skill has been added to the database.",
+        duration: 3000,
+        position: "top-center",
+        icon: "🚀",
+        style: {
+          background: "#000000",
+          color: "#ffffff",
+          border: "1px solid #1c1c1c",
+          zIndex: 9999,
+        },
+      });
+    },
   });
 
   // useMutation hook to edit a skill
   const editSkillMutation = useMutation({
     mutationFn: editSkill,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skills'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      toast.success("Skill edited successfully", {
+        description: "The skill has been edited in the database.",
+        duration: 3000,
+        position: "top-center",
+        icon: "🚀",
+        style: {
+          background: "#000000",
+          color: "#ffffff",
+          border: "1px solid #1c1c1c",
+          fontSize: "14px",
+          zIndex: 9999,
+        },
+      });
+    },
   });
 
   // useMutation hook to delete a skill
   const deleteSkillMutation = useMutation({
     mutationFn: deleteSkill,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['skills'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      toast.success("Skill deleted successfully", {
+        description: "The skill has been deleted from the database.",
+        duration: 3000,
+        position: "top-center",
+        icon: "🚀",
+        style: {
+          background: "#000000",
+          color: "#ffffff",
+          border: "1px solid #1c1c1c",
+          zIndex: 9999,
+        },
+      });
+    },
   });
 
   // Handle adding a skill
@@ -145,7 +192,7 @@ export function SkillCard({
 
   return (
     <Card className='h-fit'>
-      {isLoading ? <p>Loading...</p> : (
+      {isLoading ? <PulseLoader color='#000000' /> : (
         <div>
           <CardHeader>
             <CardTitle className='text-xl'>{title}</CardTitle>
@@ -219,7 +266,7 @@ export function SkillCard({
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
                 <Button
-                  className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                  className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer mt-4'>
                   Add
                 </Button>
               </DialogTrigger>

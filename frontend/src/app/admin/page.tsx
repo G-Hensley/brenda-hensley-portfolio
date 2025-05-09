@@ -20,6 +20,7 @@ import {
   deleteCertification,
 } from '@/lib/api';
 import { useState, useEffect, useCallback } from 'react';
+import { Toaster } from '@/components/ui/sonner';
 
 function AdminContent() {
   const { data: session, status } = useSession();
@@ -132,6 +133,7 @@ function AdminContent() {
           editItem={handleEditCertification}
           deleteItem={handleDeleteCertification}
         />
+        <Toaster />
       </div>
     </main>
   );
