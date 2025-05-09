@@ -50,6 +50,7 @@ export function SkillCard({
   const [isOpen, setIsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentSkill, setCurrentSkill] = useState<string>('');
 
   // Handle adding a skill
   const handleAddSkill = async () => {
@@ -110,6 +111,7 @@ export function SkillCard({
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                   <DialogTrigger asChild>
                     <Button
+                      onClick={() => setCurrentSkill(item.title)}
                       className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
                       Edit
                     </Button>
@@ -118,7 +120,7 @@ export function SkillCard({
                     <DialogHeader>
                       <DialogTitle>Edit Skill</DialogTitle>
                       <DialogDescription>
-                        Edit the skill in the database.
+                        {`Edit the skill: "${currentSkill}" in the database.`}
                       </DialogDescription>
                     </DialogHeader>
                     <div className='grid gap-4 py-4'>
@@ -131,6 +133,7 @@ export function SkillCard({
                           value={EditableSkillTitle}
                           className='col-span-3'
                           onChange={(e) => setEditableSkillTitle(e.target.value)}
+                          placeholder={currentSkill}
                         />
                       </div>
                       {error && <div className='text-red-500 text-sm'>{error}</div>}
