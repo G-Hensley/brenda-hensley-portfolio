@@ -27,7 +27,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useState } from 'react';
-
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { addCertification, editCertification, deleteCertification, getCertifications } from '@/lib/api';
 // EditDialog component
 interface EditDialogProps {
   isOpen: boolean;
@@ -262,20 +263,40 @@ function CertificationRow({ item, onEdit, onDelete }: CertificationRowProps) {
 // Main CertificationCard component
 interface CertificationCardProps {
   title: string;
-  data: Certification[];
-  addItem: (certification: Certification) => Promise<Certification>;
-  editItem: (certification: Certification) => Promise<Certification>;
-  deleteItem: (id: string) => Promise<void>;
 }
 
 export function CertificationCard({
   title,
-  data,
-  addItem,
-  editItem,
-  deleteItem,
 }: CertificationCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const { data: certifications } = useQuery({
+    queryKey: ['certifications'],
+    queryFn: getCertifications,
+  });
+
+  const addCertificationMutation = useMutation({
+    mutationFn: addCertification,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['certifications'] });
+    },
+  });
+
+  const editCertificationMutation = useMutation({
+    mutationFn: editCertification,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['certifications'] });
+    },
+  });
+
+  const deleteCertificationMutation = useMutation({
+    mutationFn: deleteCertification,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['certifications'] });
+    },
+  });
 
   return (
     <Card className='h-fit'>
@@ -294,19 +315,19 @@ export function CertificationCard({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((item) => (
+            {certifications?.map((item) => (
               <CertificationRow
                 key={item._id}
                 item={item}
-                onEdit={editItem}
-                onDelete={deleteItem}
+                onEdit={editCertificationMutation.mutateAsync}
+                onDelete={deleteCertificationMutation.mutateAsync}
               />
             ))}
           </TableBody>
         </Table>
       </CardContent>
       <CardFooter className='flex justify-center'>
-        <AddDialog isOpen={isOpen} onOpenChange={setIsOpen} onAdd={addItem} />
+        <AddDialog isOpen={isOpen} onOpenChange={setIsOpen} onAdd={addCertificationMutation.mutateAsync} />
       </CardFooter>
     </Card>
   );
