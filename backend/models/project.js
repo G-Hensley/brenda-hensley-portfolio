@@ -5,7 +5,7 @@ const projectSchema = new Schema({
     type: String,
     required: true,
   },
-  projectImage: {
+  image: {
     type: String,
     required: true,
   },
@@ -13,7 +13,7 @@ const projectSchema = new Schema({
     type: String,
     required: true,
   },
-  projectLink: {
+  link: {
     type: String,
     required: true,
   },

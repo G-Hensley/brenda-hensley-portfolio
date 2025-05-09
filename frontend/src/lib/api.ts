@@ -68,6 +68,10 @@ export const addSkill = async (skill: Skill): Promise<Skill> => {
 export const addProject = async (project: Project): Promise<Project> => {
   const token = await getToken();
 
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
   const response = await fetch(`${baseUrl}/projects/admin`, {
     method: 'POST',
     headers: {
@@ -76,6 +80,12 @@ export const addProject = async (project: Project): Promise<Project> => {
     },
     body: JSON.stringify(project),
   });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Error response:', errorText);
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
   const data = await response.json();
   return data.project;
 };

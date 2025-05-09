@@ -6,11 +6,11 @@ export interface Skill {
 
 // Project interface
 export interface Project {
-  _id: string;
+  _id?: string;
   title: string;
-  projectImage: string;
+  image: string;
   description: string;
-  projectLink: string;
+  link: string;
 }
 
 // Certification interface
@@ -24,7 +24,7 @@ export interface Certification {
 
 // Blog interface
 export interface Blog {
-  _id: string;
+  _id?: string;
   title: string;
   content: string;
   dateCreated: string;
