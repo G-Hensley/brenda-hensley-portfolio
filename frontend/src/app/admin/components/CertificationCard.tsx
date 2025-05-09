@@ -197,7 +197,9 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                   id={key}
                   value={addableCertification[key as keyof Certification]}
                   className='col-span-3'
-                  placeholder={key === 'dateAcquired' ? 'Format: YYYY-MM-DD' : ''}
+                  placeholder={
+                    key === 'dateAcquired' ? 'Format: YYYY-MM-DD' : ''
+                  }
                   onChange={(e) =>
                     setAddableCertification({
                       ...addableCertification,

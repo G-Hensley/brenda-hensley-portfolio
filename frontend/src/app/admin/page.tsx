@@ -4,48 +4,29 @@ import { useSession } from 'next-auth/react';
 import { SkillCard } from './components/SkillCard';
 import { ProjectCard } from './components/ProjectCard';
 import { CertificationCard } from './components/CertificationCard';
-import { Skill, Project, Certification } from '@/types/types';
+import { Certification } from '@/types/types';
 import {
-  getSkills,
   getCertifications,
-  getProjects,
-  addSkill,
-  addProject,
   addCertification,
-  editSkill,
-  editProject,
   editCertification,
-  deleteSkill,
-  deleteProject,
   deleteCertification,
 } from '@/lib/api';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 
 function AdminContent() {
   const { data: session, status } = useSession();
 
   // State variables for data from the database
-  const [skillData, setSkillData] = useState<Skill[]>([]);
-  const [projectData, setProjectData] = useState<Project[]>([]);
   const [certData, setCertData] = useState<Certification[]>([]);
 
   // Function to refresh all data
   const refreshData = useCallback(async () => {
-    const [skills, projects, certs] = await Promise.all([
-      getSkills(),
-      getProjects(),
+    const [certs] = await Promise.all([
       getCertifications(),
     ]);
-    setSkillData(skills);
-    setProjectData(projects);
     setCertData(certs);
   }, []);
-
-  // Fetch data from the database
-  useEffect(() => {
-    refreshData();
-  }, [refreshData]);
 
   if (status === 'loading') return <div>Loading...</div>;
 
@@ -54,39 +35,6 @@ function AdminContent() {
   }
 
   // Wrapper functions that refresh data after operations
-  const handleAddSkill = async (skill: Skill): Promise<Skill> => {
-    const result = await addSkill(skill);
-    await refreshData();
-    return result;
-  };
-
-  const handleEditSkill = async (skill: Skill): Promise<Skill> => {
-    const result = await editSkill(skill);
-    await refreshData();
-    return result;
-  };
-
-  const handleDeleteSkill = async (id: string): Promise<void> => {
-    await deleteSkill(id);
-    await refreshData();
-  };
-
-  const handleAddProject = async (project: Project): Promise<Project> => {
-    const result = await addProject(project);
-    await refreshData();
-    return result;
-  };
-
-  const handleEditProject = async (project: Project): Promise<Project> => {
-    const result = await editProject(project);
-    await refreshData();
-    return result;
-  };
-
-  const handleDeleteProject = async (id: string): Promise<void> => {
-    await deleteProject(id);
-    await refreshData();
-  };
 
   const handleAddCertification = async (
     certification: Certification
@@ -121,10 +69,6 @@ function AdminContent() {
         />
         <ProjectCard
           title='Projects'
-          data={projectData}
-          addItem={handleAddProject}
-          editItem={handleEditProject}
-          deleteItem={handleDeleteProject}
         />
         <CertificationCard
           title='Certifications'
@@ -133,8 +77,8 @@ function AdminContent() {
           editItem={handleEditCertification}
           deleteItem={handleDeleteCertification}
         />
-        <Toaster />
       </div>
+      <Toaster />
     </main>
   );
 }
