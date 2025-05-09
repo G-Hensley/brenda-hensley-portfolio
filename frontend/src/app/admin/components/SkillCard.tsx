@@ -1,4 +1,6 @@
+// Button component imports from shadcn/ui
 import { Button } from '@/components/ui/button';
+// Card component imports from shadcn/ui
 import {
   Card,
   CardContent,
@@ -6,7 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+// Skill type import from types.ts to create the skill object
 import { Skill } from '@/types/types';
+// Table component imports
 import {
   Table,
   TableBody,
@@ -15,8 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+// Label component imports from shadcn/ui
 import { Label } from '@/components/ui/label';
+// Input component imports from shadcn/ui
 import { Input } from '@/components/ui/input';
+// Dialog component imports from shadcn/ui
 import {
   Dialog,
   DialogDescription,
@@ -37,6 +44,7 @@ interface SkillCardProps {
   deleteItem: (id: string) => Promise<void>;
 }
 
+// SkillCard component
 export function SkillCard({
   title,
   data,
@@ -44,19 +52,34 @@ export function SkillCard({
   editItem,
   deleteItem,
 }: SkillCardProps) {
+
   // State variables for the component
+  // AddableSkillTitle is the title of the skill to be added
   const [AddableSkillTitle, setAddableSkillTitle] = useState<string>('');
+
+  // EditableSkillTitle is the title of the skill to be edited
   const [EditableSkillTitle, setEditableSkillTitle] = useState<string>('');
+
+  // isOpen is the state variable for the add skill dialog
   const [isOpen, setIsOpen] = useState(false);
+
+  // isEditOpen is the state variable for the edit skill dialog
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  // error is the state variable for the error message
   const [error, setError] = useState<string | null>(null);
+
+  // currentSkill is the state variable for the current skill
   const [currentSkill, setCurrentSkill] = useState<string>('');
 
   // Handle adding a skill
   const handleAddSkill = async () => {
+    // Try adding the skill
     try {
+      // If the title is not empty, add the skill
       if (AddableSkillTitle.trim()) {
         await addItem({ title: AddableSkillTitle });
+        // Clear the addable skill title
         setAddableSkillTitle('');
         setIsOpen(false);
         setError(null);
@@ -68,8 +91,11 @@ export function SkillCard({
 
   // Handle editing a skill
   const handleEditSkill = async (skill: Skill) => {
+    // Get the id of the skill
     const id = skill._id;
+    // Try editing the skill
     try {
+      // If the title is not empty, edit the skill
       if (EditableSkillTitle.trim()) {
         const skill = {
           _id: id,
@@ -86,7 +112,12 @@ export function SkillCard({
 
   // Handle deleting a skill
   const handleDeleteSkill = async (id: string) => {
-    await deleteItem(id);
+    // Try deleting the skill
+    try {
+      await deleteItem(id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete skill');
+    }
   };
 
   return (
