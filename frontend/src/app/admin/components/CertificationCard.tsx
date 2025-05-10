@@ -1,4 +1,6 @@
+// Button component imports from shadcn/ui
 import { Button } from '@/components/ui/button';
+// Card component imports from shadcn/ui
 import {
   Card,
   CardContent,
@@ -6,7 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+// Certification type import from types.ts to create the certification object
 import { Certification } from '@/types/types';
+// Table component imports
 import {
   Table,
   TableBody,
@@ -15,8 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+// Label component imports from shadcn/ui
 import { Label } from '@/components/ui/label';
+// Input component imports from shadcn/ui
 import { Input } from '@/components/ui/input';
+// Dialog component imports from shadcn/ui
 import {
   Dialog,
   DialogDescription,
@@ -26,13 +33,16 @@ import {
   DialogHeader,
   DialogFooter,
 } from '@/components/ui/dialog';
+// Import useState from react
 import { useState } from 'react';
+// Import useMutation, useQueryClient and useQuery from react-query
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+// Import the addCertification, editCertification, deleteCertification and getCertifications functions from the api.ts file
 import { addCertification, editCertification, deleteCertification, getCertifications } from '@/lib/api';
 // Import toast options from lib
 import { successToast, errorToast } from '@/lib/toast';
 
-// EditDialog component
+// EditDialogProps is the props for the EditDialog component
 interface EditDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -41,6 +51,7 @@ interface EditDialogProps {
   currentCertification: string;
 }
 
+// EditDialog component
 function EditDialog({
   isOpen,
   onOpenChange,
@@ -48,6 +59,7 @@ function EditDialog({
   onEdit,
   currentCertification,
 }: EditDialogProps) {
+  // Use state to create the editableCertification object and set the error state
   const [editableCertification, setEditableCertification] =
     useState<Certification>({
       _id: '',
@@ -58,9 +70,13 @@ function EditDialog({
     });
   const [error, setError] = useState<string | null>(null);
 
+  // Handle the edit of the certification
   const handleEdit = async () => {
+    // Try to edit the certification
     try {
+      // If the title and dateAcquired are not empty, edit the certification
       if (editableCertification.title.trim() && editableCertification.dateAcquired.trim() !== '') {
+        // Set the _id of the editableCertification to the _id of the item
         editableCertification._id = item._id;
         await onEdit(editableCertification);
         setEditableCertification({
@@ -70,15 +86,18 @@ function EditDialog({
           description: [],
           dateAcquired: '',
         });
+        // Close the dialog
         onOpenChange(false);
       }
     } catch (err) {
+      // Set the error to the error message
       setError(
         err instanceof Error ? err.message : 'Failed to edit certification'
       );
     }
   };
 
+  // Return the EditDialog component
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -157,14 +176,16 @@ function EditDialog({
   );
 }
 
-// AddDialog component
+// AddDialogProps is the props for the AddDialog component
 interface AddDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (certification: Certification) => Promise<Certification>;
 }
 
+// AddDialog component
 function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
+  // Use state to create the addableCertification object and set the error state
   const [addableCertification, setAddableCertification] =
     useState<Certification>({
       title: '',
@@ -174,8 +195,11 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
     });
   const [error, setError] = useState<string | null>(null);
 
+  // Handle the add of the certification
   const handleAdd = async () => {
+    // Try to add the certification
     try {
+      // If the title and dateAcquired are not empty, add the certification
       if (addableCertification.title.trim() && addableCertification.dateAcquired.trim() !== '') {
         await onAdd(addableCertification);
         setAddableCertification({
@@ -184,16 +208,20 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
           description: [],
           dateAcquired: '',
         });
+        // Close the dialog
         onOpenChange(false);
+        // Set the error to null
         setError(null);
       }
     } catch (err) {
+      // Set the error to the error message
       setError(
         err instanceof Error ? err.message : 'Failed to add certification'
       );
     }
   };
 
+  // Return the AddDialog component
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -262,16 +290,19 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
   );
 }
 
-// CertificationRow component
+// CertificationRowProps is the props for the CertificationRow component
 interface CertificationRowProps {
   item: Certification;
   onEdit: (certification: Certification) => Promise<Certification>;
   onDelete: (id: string) => Promise<void>;
 }
 
+// CertificationRow component
 function CertificationRow({ item, onEdit, onDelete }: CertificationRowProps) {
+  // Use state to create the isEditOpen state
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  // Return the CertificationRow component
   return (
     <TableRow key={item._id}>
       <TableCell>{item.title}</TableCell>
@@ -296,23 +327,28 @@ function CertificationRow({ item, onEdit, onDelete }: CertificationRowProps) {
   );
 }
 
-// Main CertificationCard component
+// CertificationCardProps is the props for the CertificationCard component
 interface CertificationCardProps {
   title: string;
 }
 
+// Main CertificationCard component
 export function CertificationCard({
   title,
 }: CertificationCardProps) {
+  // Use state to create the isOpen state
   const [isOpen, setIsOpen] = useState(false);
 
+  // Use the useQueryClient hook to create the queryClient
   const queryClient = useQueryClient();
 
+  // Use the useQuery hook to get the certifications
   const { data: certifications } = useQuery({
     queryKey: ['certifications'],
     queryFn: getCertifications,
   });
 
+  // Use the useMutation hook to add the certification
   const addCertificationMutation = useMutation({
     mutationFn: addCertification,
     onSuccess: () => {
@@ -324,6 +360,7 @@ export function CertificationCard({
     },
   });
 
+  // Use the useMutation hook to edit the certification
   const editCertificationMutation = useMutation({
     mutationFn: editCertification,
     onSuccess: () => {
@@ -335,6 +372,7 @@ export function CertificationCard({
     },
   });
 
+  // Use the useMutation hook to delete the certification
   const deleteCertificationMutation = useMutation({
     mutationFn: deleteCertification,
     onSuccess: () => {
@@ -346,6 +384,7 @@ export function CertificationCard({
     },
   });
 
+  // Return the CertificationCard component
   return (
     <Card className='h-fit'>
       <CardHeader>
