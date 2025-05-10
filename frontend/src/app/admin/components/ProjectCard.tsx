@@ -30,7 +30,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProjects, addProject, editProject, deleteProject } from '@/lib/api';
 import { PulseLoader } from 'react-spinners';
-import { toast } from 'sonner';
+import { successToast, errorToast } from '@/lib/toast';
 
 // CertificationCardProps is the props for the CertificationCard component
 interface ProjectCardProps {
@@ -71,18 +71,10 @@ export function ProjectCard({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
-      toast.success("Project added successfully", {
-        description: "The project has been added to the database.",
-        duration: 3000,
-        position: "top-center",
-        icon: "🚀",
-        style: {
-          background: "#000000",
-          color: "#ffffff",
-          border: "1px solid #1c1c1c",
-          zIndex: 9999,
-        },
-      });
+      successToast('project', 'added');
+    },
+    onError: () => {
+      errorToast('project', 'added');
     },
   });
 
@@ -91,18 +83,10 @@ export function ProjectCard({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
-      toast.success("Project edited successfully", {
-        description: "The project has been edited in the database.",
-        duration: 3000,
-        position: "top-center",
-        icon: "🚀",
-        style: {
-          background: "#000000",
-          color: "#ffffff",
-          border: "1px solid #1c1c1c",
-          zIndex: 9999,
-        },
-      });
+      successToast('project', 'edited');
+    },
+    onError: () => {
+      errorToast('project', 'edited');
     },
   });
 
@@ -111,18 +95,10 @@ export function ProjectCard({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
-      toast.success("Project deleted successfully", {
-        description: "The project has been deleted from the database.",
-        duration: 3000,
-        position: "top-center",
-        icon: "🚀",
-        style: {
-          background: "#000000",
-          color: "#ffffff",
-          border: "1px solid #1c1c1c",
-          zIndex: 9999,
-        },
-      });
+      successToast('project', 'deleted');
+    },
+    onError: () => {
+      errorToast('project', 'deleted');
     },
   });
   
@@ -178,7 +154,13 @@ export function ProjectCard({
 
   // Handle deleting a project
   const handleDeleteProject = async (id: string) => {
-    await deleteProjectMutation.mutateAsync(id);
+    try {
+      await deleteProjectMutation.mutateAsync(id);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to delete project'
+      );
+    }
   };
 
   return (
@@ -270,7 +252,7 @@ export function ProjectCard({
           <CardFooter className='flex justify-center'>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer mt-4'>
                   Add
                 </Button>
               </DialogTrigger>
@@ -309,7 +291,7 @@ export function ProjectCard({
                     type='submit'
                     onClick={handleAddProject}
                     className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-                    Save changes
+                    Save
                   </Button>
                 </DialogFooter>
               </DialogContent>

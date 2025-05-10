@@ -1,7 +1,5 @@
 // Button component imports from shadcn/ui
 import { Button } from '@/components/ui/button';
-// Import toast from shadcn/ui
-import { toast } from 'sonner';
 // Card component imports from shadcn/ui
 import {
   Card,
@@ -42,6 +40,9 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 // Import pulse loader from react-spinners
 import { PulseLoader } from 'react-spinners';
+// Import toast options from lib
+import { successToast, errorToast } from '@/lib/toast';
+
 
 // SkillCardProps is the props for the SkillCard component
 interface SkillCardProps {
@@ -86,18 +87,10 @@ export function SkillCard({
     mutationFn: addSkill,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
-      toast.success("Skill added successfully", {
-        description: "The skill has been added to the database.",
-        duration: 3000,
-        position: "top-center",
-        icon: "🚀",
-        style: {
-          background: "#000000",
-          color: "#ffffff",
-          border: "1px solid #1c1c1c",
-          zIndex: 9999,
-        },
-      });
+      successToast('skill', 'added');
+    },
+    onError: () => {
+      errorToast('skill', 'added');
     },
   });
 
@@ -106,19 +99,10 @@ export function SkillCard({
     mutationFn: editSkill,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
-      toast.success("Skill edited successfully", {
-        description: "The skill has been edited in the database.",
-        duration: 3000,
-        position: "top-center",
-        icon: "🚀",
-        style: {
-          background: "#000000",
-          color: "#ffffff",
-          border: "1px solid #1c1c1c",
-          fontSize: "14px",
-          zIndex: 9999,
-        },
-      });
+      successToast('skill', 'edited');
+    },
+    onError: () => {
+      errorToast('skill', 'edited');
     },
   });
 
@@ -127,18 +111,10 @@ export function SkillCard({
     mutationFn: deleteSkill,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
-      toast.success("Skill deleted successfully", {
-        description: "The skill has been deleted from the database.",
-        duration: 3000,
-        position: "top-center",
-        icon: "🚀",
-        style: {
-          background: "#000000",
-          color: "#ffffff",
-          border: "1px solid #1c1c1c",
-          zIndex: 9999,
-        },
-      });
+      successToast('skill', 'deleted');
+    },
+    onError: () => {
+      errorToast('skill', 'deleted');
     },
   });
 

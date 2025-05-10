@@ -29,6 +29,9 @@ import {
 import { useState } from 'react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { addCertification, editCertification, deleteCertification, getCertifications } from '@/lib/api';
+// Import toast options from lib
+import { successToast, errorToast } from '@/lib/toast';
+
 // EditDialog component
 interface EditDialogProps {
   isOpen: boolean;
@@ -57,7 +60,8 @@ function EditDialog({
 
   const handleEdit = async () => {
     try {
-      if (editableCertification.title.trim()) {
+      if (editableCertification.title.trim() && editableCertification.dateAcquired.trim() !== '') {
+        editableCertification._id = item._id;
         await onEdit(editableCertification);
         setEditableCertification({
           _id: '',
@@ -99,10 +103,25 @@ function EditDialog({
                     <Label htmlFor={key} className='text-right'>
                       {key.charAt(0).toUpperCase() + key.slice(1)}
                     </Label>
-                    <Input
+                    {
+                      key === 'dateAcquired' ? (
+                        <Input
+                          id={key}
+                          value={editableCertification[key as keyof Certification]}
+                          className='col-span-3'
+                          type='date'
+                          onChange={(e) =>
+                            setEditableCertification({
+                              ...editableCertification,
+                              [key]: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        <Input
                       id={key}
                       value={editableCertification[key as keyof Certification]}
-                      placeholder={
+                      placeholder={ 
                         Array.isArray(item[key as keyof Certification])
                           ? (item[key as keyof Certification] as string[]).join(
                               ', '
@@ -117,6 +136,8 @@ function EditDialog({
                         })
                       }
                     />
+                      )
+                    }
                   </div>
                 )
             )}
@@ -155,7 +176,7 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
 
   const handleAdd = async () => {
     try {
-      if (addableCertification.title.trim()) {
+      if (addableCertification.title.trim() && addableCertification.dateAcquired.trim() !== '') {
         await onAdd(addableCertification);
         setAddableCertification({
           title: '',
@@ -194,7 +215,8 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                 <Label htmlFor={key} className='text-right'>
                   {key.charAt(0).toUpperCase() + key.slice(1)}
                 </Label>
-                <Input
+                {key !== "dateAcquired" ? (
+                  <Input
                   id={key}
                   value={addableCertification[key as keyof Certification]}
                   className='col-span-3'
@@ -208,6 +230,20 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                     })
                   }
                 />
+                ) : (
+                  <Input
+                    id={key}
+                    value={addableCertification[key as keyof Certification]}
+                    className='col-span-3'
+                    type='date'
+                    onChange={(e) =>
+                      setAddableCertification({
+                        ...addableCertification,
+                        [key]: e.target.value,
+                      })
+                    }
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -218,7 +254,7 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
             type='submit'
             onClick={handleAdd}
             className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-            Save changes
+            Save
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -241,7 +277,7 @@ function CertificationRow({ item, onEdit, onDelete }: CertificationRowProps) {
       <TableCell>{item.title}</TableCell>
       <TableCell>{item.certImage}</TableCell>
       <TableCell>{item.description}</TableCell>
-      <TableCell>{item.dateAcquired}</TableCell>
+      <TableCell>{item.dateAcquired.split('T')[0]}</TableCell>
       <TableCell className='flex gap-2'>
         <EditDialog
           isOpen={isEditOpen}
@@ -281,6 +317,10 @@ export function CertificationCard({
     mutationFn: addCertification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications'] });
+      successToast('certification', 'added');
+    },
+    onError: () => {
+      errorToast('certification', 'added');
     },
   });
 
@@ -288,6 +328,10 @@ export function CertificationCard({
     mutationFn: editCertification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications'] });
+      successToast('certification', 'edited');
+    },
+    onError: () => {
+      errorToast('certification', 'edited');
     },
   });
 
@@ -295,6 +339,10 @@ export function CertificationCard({
     mutationFn: deleteCertification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications'] });
+      successToast('certification', 'deleted');
+    },
+    onError: () => {
+      errorToast('certification', 'deleted');
     },
   });
 
