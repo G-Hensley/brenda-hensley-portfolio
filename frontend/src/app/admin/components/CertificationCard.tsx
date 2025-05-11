@@ -1,5 +1,7 @@
 // Button component imports from shadcn/ui
 import { Button } from '@/components/ui/button';
+// InputFile component imports from components
+import { InputFile } from '@/components/ui/input-file';
 // Card component imports from shadcn/ui
 import {
   Card,
@@ -210,6 +212,8 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
   const handleAdd = async () => {
     // Try to add the certification
     try {
+
+      await uploadImage(addableCertification.certImage);
       // If the title and dateAcquired are not empty, add the certification
       if (addableCertification.title.trim() && addableCertification.dateAcquired.trim() !== '') {
         await onAdd(addableCertification);
@@ -233,8 +237,8 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
   };
 
   // Handle the upload of the certification image
-  const uploadImage = (file: File) => {
-    return "Hello " + file.name;
+  const uploadImage = (file: string) => {
+    return "Hello " + file;
   }
 
   // Return the AddDialog component
@@ -259,7 +263,19 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                 <Label htmlFor={key} className='text-right'>
                   {key.charAt(0).toUpperCase() + key.slice(1)}
                 </Label>
-                <Input
+                {inputType(key) === 'file' ? (
+                  <InputFile 
+                    id={key}
+                    accept={key === 'certImage' ? 'image/*' : ''}
+                    onChange={(file) => {
+                      setAddableCertification({
+                        ...addableCertification,
+                        [key]: file,
+                      });
+                    }}
+                  />
+                ) : (
+                  <Input
                   id={key}
                   value={addableCertification[key as keyof Certification]}
                   className='col-span-3'
@@ -269,14 +285,7 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                     key === 'dateAcquired' ? 'Format: YYYY-MM-DD' : ''
                   }
                   onChange={
-                    key === 'certImage' ? 
                     (e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        uploadImage(file);
-                      }
-                    }
-                    : (e) => {
                       setAddableCertification({
                         ...addableCertification,
                         [key]: e.target.value,
@@ -284,6 +293,7 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                     }
                   }
                 />
+                )}
               </div>
             ))}
           </div>
