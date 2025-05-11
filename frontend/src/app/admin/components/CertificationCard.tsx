@@ -195,6 +195,17 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
     });
   const [error, setError] = useState<string | null>(null);
 
+  // Handle the type of input for the certification inputs
+  const inputType = (key: string) => {
+    if (key === 'dateAcquired') {
+      return 'date';
+    } else if (key === 'certImage') {
+      return 'file';
+    } else {
+      return 'text';
+    }
+  }
+
   // Handle the add of the certification
   const handleAdd = async () => {
     // Try to add the certification
@@ -221,6 +232,11 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
     }
   };
 
+  // Handle the upload of the certification image
+  const uploadImage = (file: File) => {
+    return "Hello " + file.name;
+  }
+
   // Return the AddDialog component
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -243,35 +259,31 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
                 <Label htmlFor={key} className='text-right'>
                   {key.charAt(0).toUpperCase() + key.slice(1)}
                 </Label>
-                {key !== "dateAcquired" ? (
-                  <Input
+                <Input
                   id={key}
                   value={addableCertification[key as keyof Certification]}
                   className='col-span-3'
+                  accept={key === 'certImage' ? 'image/*' : ''}
+                  type={inputType(key)}
                   placeholder={
                     key === 'dateAcquired' ? 'Format: YYYY-MM-DD' : ''
                   }
-                  onChange={(e) =>
-                    setAddableCertification({
-                      ...addableCertification,
-                      [key]: e.target.value,
-                    })
-                  }
-                />
-                ) : (
-                  <Input
-                    id={key}
-                    value={addableCertification[key as keyof Certification]}
-                    className='col-span-3'
-                    type='date'
-                    onChange={(e) =>
+                  onChange={
+                    key === 'certImage' ? 
+                    (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        uploadImage(file);
+                      }
+                    }
+                    : (e) => {
                       setAddableCertification({
                         ...addableCertification,
                         [key]: e.target.value,
-                      })
+                      });
                     }
-                  />
-                )}
+                  }
+                />
               </div>
             ))}
           </div>
