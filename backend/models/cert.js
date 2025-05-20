@@ -17,6 +17,10 @@ const certSchema = new Schema({
     type: Date,
     required: true,
   },
+  fileUrl: {
+    type: String,
+    required: false,
+  }
 });
 
 const Cert = model('Cert', certSchema);
