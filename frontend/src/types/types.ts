@@ -17,9 +17,10 @@ export interface Project {
 export interface Certification {
   _id?: string;
   title: string;
-  certImage: string;
   description: string[];
   dateAcquired: string;
+  fileUrl: string;
+  fileKey: string;
 }
 
 // Blog interface

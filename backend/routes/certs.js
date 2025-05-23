@@ -1,63 +1,76 @@
+// routes/certs.js
 import express from 'express';
 import Cert from '../models/cert.js';
 import authenticate from '../middlewares/auth.js';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { s3 } from '../utils/s3Client.js';
 
-// Create a router to handle cert routes
 const router = express.Router();
 
-// Get all certs - Public Route
+// GET all certs
 router.get('/', async (req, res) => {
-    // Try to get all certs from the database
-    try {
-        const certs = await Cert.find();
-        res.status(200).json({ message: 'Certs fetched successfully', certs });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching certs', error: error.message });
-    }
+  try {
+    const certs = await Cert.find();
+    res.json({ certs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Create a new cert - Admin Route
+// CREATE cert
 router.post('/admin', authenticate, async (req, res) => {
-  // Get the cert data from the request body
-    const { title, certImage, description, dateAcquired } = req.body;
-
-    // Try to create a new cert
-    try {
-        const newCert = new Cert({ title, certImage, description, dateAcquired });
-        const savedCert = await newCert.save();
-        res.status(201).json({ message: 'Cert added successfully', cert: savedCert });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating cert', error: error.message });
-    }
+  const { title, description, dateAcquired, fileKey, fileUrl } = req.body;
+  if (!fileKey || !fileUrl) return res.status(400).json({ error: 'Missing fileKey/fileUrl' });
+  try {
+    const cert = await Cert.create({ title, description, dateAcquired, fileKey, fileUrl });
+    res.status(201).json({ cert });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Update a cert by id - Admin Route
+// UPDATE cert
 router.put('/admin/:id', authenticate, async (req, res) => {
-  // Get the cert data from the request body
-    const { title, certImage, description, dateAcquired } = req.body;
+  const { title, description, dateAcquired, fileKey, fileUrl } = req.body;
+  try {
+    const cert = await Cert.findById(req.params.id);
+    if (!cert) return res.status(404).json({ error: 'Not found' });
 
-    // Try to update the cert
-    try {
-        const updatedCert = await Cert.findByIdAndUpdate(req.params.id, { title, certImage, description, dateAcquired }, { new: true });
-        res.status(200).json({ message: 'Cert updated successfully', cert: updatedCert });
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating cert', error: error.message });
+    // if image changed, delete old then swap
+    if (fileKey && fileKey !== cert.fileKey) {
+      await s3.send(new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: cert.fileKey,
+      }));
+      cert.fileKey = fileKey;
+      cert.fileUrl = fileUrl;
     }
+
+    cert.title        = title;
+    cert.description  = description;
+    cert.dateAcquired = dateAcquired;
+    await cert.save();
+    res.json({ cert });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Delete a cert by id - Admin Route
+// DELETE cert
 router.delete('/admin/:id', authenticate, async (req, res) => {
-  // Get the cert id from the request params
-    const { id } = req.params;
+  try {
+    const cert = await Cert.findById(req.params.id);
+    if (!cert) return res.status(404).json({ error: 'Not found' });
 
-    // Try to delete the cert
-    try {
-        await Cert.findByIdAndDelete(id);
-        res.status(200).json({ message: 'Cert deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting cert', error: error.message });
-    }
+    await s3.send(new DeleteObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: cert.fileKey,
+    }));
+    await Cert.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Export the router
 export default router;

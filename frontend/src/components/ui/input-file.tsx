@@ -85,7 +85,6 @@ export function InputFile({
 
   return (
     <div className={cn('w-full max-w-sm', className)}>
-
       <div
         className={cn(
           'relative flex flex-col items-center justify-center rounded-md border-2 border-dashed p-6 transition-colors',
@@ -129,8 +128,9 @@ export function InputFile({
                 <Image
                   src={preview || '/placeholder.svg'}
                   alt='File preview'
-                  fill
-                  className='object-cover'
+                  width={128}
+                  height={128}
+                  className='object-cover h-full w-full'
                 />
               </div>
             )}

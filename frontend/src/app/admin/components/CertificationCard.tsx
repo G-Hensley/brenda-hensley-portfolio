@@ -1,3 +1,4 @@
+import Image from 'next/image';
 // Button component imports from shadcn/ui
 import { Button } from '@/components/ui/button';
 // InputFile component imports from components
@@ -10,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-// Certification type import from types.ts to create the certification object
+// Certification type import
 import { Certification } from '@/types/types';
 // Table component imports
 import {
@@ -21,11 +22,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-// Label component imports from shadcn/ui
+// Label component imports
 import { Label } from '@/components/ui/label';
-// Input component imports from shadcn/ui
+// Input component imports
 import { Input } from '@/components/ui/input';
-// Dialog component imports from shadcn/ui
+// Dialog component imports
 import {
   Dialog,
   DialogDescription,
@@ -35,313 +36,248 @@ import {
   DialogHeader,
   DialogFooter,
 } from '@/components/ui/dialog';
-// Import useState from react
 import { useState } from 'react';
-// Import useMutation, useQueryClient and useQuery from react-query
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-// Import the addCertification, editCertification, deleteCertification and getCertifications functions from the api.ts file
-import { addCertification, editCertification, deleteCertification, getCertifications } from '@/lib/api';
-// Import toast options from lib
+import {
+  getCertifications,
+  addCertification,
+  editCertification,
+  deleteCertification,
+} from '@/lib/api';
 import { successToast, errorToast } from '@/lib/toast';
 
-// EditDialogProps is the props for the EditDialog component
-interface EditDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  item: Certification;
-  onEdit: (certification: Certification) => Promise<Certification>;
-  currentCertification: string;
-}
-
-// EditDialog component
-function EditDialog({
-  isOpen,
-  onOpenChange,
-  item,
-  onEdit,
-  currentCertification,
-}: EditDialogProps) {
-  // Use state to create the editableCertification object and set the error state
-  const [editableCertification, setEditableCertification] =
-    useState<Certification>({
-      _id: '',
-      title: '',
-      certImage: '',
-      description: [],
-      dateAcquired: '',
-    });
-  const [error, setError] = useState<string | null>(null);
-
-  // Handle the edit of the certification
-  const handleEdit = async () => {
-    // Try to edit the certification
-    try {
-      // If the title and dateAcquired are not empty, edit the certification
-      if (editableCertification.title.trim() && editableCertification.dateAcquired.trim() !== '') {
-        // Set the _id of the editableCertification to the _id of the item
-        editableCertification._id = item._id;
-        await onEdit(editableCertification);
-        setEditableCertification({
-          _id: '',
-          title: '',
-          certImage: '',
-          description: [],
-          dateAcquired: '',
-        });
-        // Close the dialog
-        onOpenChange(false);
-      }
-    } catch (err) {
-      // Set the error to the error message
-      setError(
-        err instanceof Error ? err.message : 'Failed to edit certification'
-      );
-    }
-  };
-
-  // Return the EditDialog component
-  return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
-          Edit
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
-        <DialogHeader>
-          <DialogTitle>Edit Certification</DialogTitle>
-          <DialogDescription>
-            Edit the certification: {currentCertification} in the database.
-          </DialogDescription>
-        </DialogHeader>
-        <div className='gap-4 py-4'>
-          <div className='flex flex-col gap-4'>
-            {Object.keys(item).map(
-              (key) =>
-                key !== '_id' &&
-                key !== '__v' && (
-                  <div className='flex flex-col gap-2' key={key}>
-                    <Label htmlFor={key} className='text-right'>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </Label>
-                    {
-                      key === 'dateAcquired' ? (
-                        <Input
-                          id={key}
-                          value={editableCertification[key as keyof Certification]}
-                          className='col-span-3'
-                          type='date'
-                          onChange={(e) =>
-                            setEditableCertification({
-                              ...editableCertification,
-                              [key]: e.target.value,
-                            })
-                          }
-                        />
-                      ) : (
-                        <Input
-                      id={key}
-                      value={editableCertification[key as keyof Certification]}
-                      placeholder={ 
-                        Array.isArray(item[key as keyof Certification])
-                          ? (item[key as keyof Certification] as string[]).join(
-                              ', '
-                            )
-                          : (item[key as keyof Certification] as string)
-                      }
-                      className='col-span-3'
-                      onChange={(e) =>
-                        setEditableCertification({
-                          ...editableCertification,
-                          [key]: e.target.value,
-                        })
-                      }
-                    />
-                      )
-                    }
-                  </div>
-                )
-            )}
-          </div>
-          {error && <div className='text-red-500 text-sm'>{error}</div>}
-        </div>
-        <DialogFooter>
-          <Button
-            type='submit'
-            onClick={handleEdit}
-            className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-            Save changes
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// AddDialogProps is the props for the AddDialog component
+// --- Add Dialog ---
 interface AddDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: (certification: Certification) => Promise<Certification>;
+  onAdd: (
+    cert: Omit<Certification, '_id' | 'fileKey' | 'fileUrl'> & { file: File }
+  ) => Promise<Certification>;
 }
-
-// AddDialog component
 function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
-  // Use state to create the addableCertification object and set the error state
-  const [addableCertification, setAddableCertification] =
-    useState<Certification>({
-      title: '',
-      certImage: '',
-      description: [],
-      dateAcquired: '',
-    });
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState<string>('');
+  const [dateAcquired, setDateAcquired] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Handle the type of input for the certification inputs
-  const inputType = (key: string) => {
-    if (key === 'dateAcquired') {
-      return 'date';
-    } else if (key === 'certImage') {
-      return 'file';
-    } else {
-      return 'text';
-    }
-  }
-
-  // Handle the add of the certification
   const handleAdd = async () => {
-    // Try to add the certification
+    if (!title || !dateAcquired || !file) {
+      setError('Title, date acquired and image are required');
+      return;
+    }
     try {
-
-      await uploadImage(addableCertification.certImage);
-      // If the title and dateAcquired are not empty, add the certification
-      if (addableCertification.title.trim() && addableCertification.dateAcquired.trim() !== '') {
-        await onAdd(addableCertification);
-        setAddableCertification({
-          title: '',
-          certImage: '',
-          description: [],
-          dateAcquired: '',
-        });
-        // Close the dialog
-        onOpenChange(false);
-        // Set the error to null
-        setError(null);
-      }
+      await onAdd({
+        title,
+        description: description.split(',').map((s) => s.trim()),
+        dateAcquired,
+        file,
+      });
+      setTitle('');
+      setDescription('');
+      setDateAcquired('');
+      setFile(null);
+      setError(null);
+      onOpenChange(false);
     } catch (err) {
-      // Set the error to the error message
       setError(
         err instanceof Error ? err.message : 'Failed to add certification'
       );
     }
   };
 
-  // Handle the upload of the certification image
-  const uploadImage = (file: string) => {
-    return "Hello " + file;
-  }
-
-  // Return the AddDialog component
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-          Add
-        </Button>
+        <Button>Add Certification</Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
+      <DialogContent className='sm:max-w-lg'>
         <DialogHeader>
           <DialogTitle>Add Certification</DialogTitle>
           <DialogDescription>
-            Add a new certification to the database.
+            Provide details and upload an image.
           </DialogDescription>
         </DialogHeader>
-        <div className='grid gap-4 py-4'>
-          <div className='flex flex-col gap-4'>
-            {Object.keys(addableCertification).map((key) => (
-              <div className='flex flex-col gap-2' key={key}>
-                <Label htmlFor={key} className='text-right'>
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </Label>
-                {inputType(key) === 'file' ? (
-                  <InputFile 
-                    id={key}
-                    accept={key === 'certImage' ? 'image/*' : ''}
-                    onChange={(file) => {
-                      setAddableCertification({
-                        ...addableCertification,
-                        [key]: file,
-                      });
-                    }}
-                  />
-                ) : (
-                  <Input
-                  id={key}
-                  value={addableCertification[key as keyof Certification]}
-                  className='col-span-3'
-                  accept={key === 'certImage' ? 'image/*' : ''}
-                  type={inputType(key)}
-                  placeholder={
-                    key === 'dateAcquired' ? 'Format: YYYY-MM-DD' : ''
-                  }
-                  onChange={
-                    (e) => {
-                      setAddableCertification({
-                        ...addableCertification,
-                        [key]: e.target.value,
-                      });
-                    }
-                  }
-                />
-                )}
-              </div>
-            ))}
+        <div className='space-y-4'>
+          <div>
+            <Label htmlFor='cert-title'>Title</Label>
+            <Input
+              id='cert-title'
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
-          {error && <div className='text-red-500 text-sm'>{error}</div>}
+          <div>
+            <Label htmlFor='cert-description'>
+              Description (comma-separated)
+            </Label>
+            <Input
+              id='cert-description'
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor='cert-date'>Date Acquired</Label>
+            <Input
+              id='cert-date'
+              type='date'
+              value={dateAcquired}
+              onChange={(e) => setDateAcquired(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor='cert-file'>Certification Image</Label>
+            <InputFile
+              id='cert-file'
+              accept='image/*'
+              onChange={(file) => setFile(file)}
+            />
+          </div>
+          {error && <p className='text-red-500'>{error}</p>}
         </div>
         <DialogFooter>
-          <Button
-            type='submit'
-            onClick={handleAdd}
-            className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
-            Save
-          </Button>
+          <Button onClick={handleAdd}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
 
-// CertificationRowProps is the props for the CertificationRow component
-interface CertificationRowProps {
-  item: Certification;
-  onEdit: (certification: Certification) => Promise<Certification>;
-  onDelete: (id: string) => Promise<void>;
+// --- Edit Dialog ---
+interface EditDialogProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  certification: Certification;
+  onEdit: (
+    cert: Partial<Certification> & { _id: string; file?: File }
+  ) => Promise<Certification>;
+}
+function EditDialog({
+  isOpen,
+  onOpenChange,
+  certification,
+  onEdit,
+}: EditDialogProps) {
+  const [title, setTitle] = useState(certification.title);
+  const [description, setDescription] = useState<string>(
+    certification.description.join(', ')
+  );
+  const [dateAcquired, setDateAcquired] = useState(
+    certification.dateAcquired.split('T')[0]
+  );
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleEdit = async () => {
+    if (!title || !dateAcquired) {
+      setError('Title and date are required');
+      return;
+    }
+    try {
+      await onEdit({
+        _id: certification._id!,
+        title,
+        description: description.split(',').map((s) => s.trim()),
+        dateAcquired,
+        ...(file ? { file } : {}),
+      });
+      setError(null);
+      onOpenChange(false);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to edit certification'
+      );
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button>Edit</Button>
+      </DialogTrigger>
+      <DialogContent className='sm:max-w-lg'>
+        <DialogHeader>
+          <DialogTitle>Edit Certification</DialogTitle>
+          <DialogDescription>
+            Edit details or upload new image.
+          </DialogDescription>
+        </DialogHeader>
+        <div className='space-y-4'>
+          <div>
+            <Label>Title</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div>
+            <Label>Description (comma-separated)</Label>
+            <Input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Date Acquired</Label>
+            <Input
+              type='date'
+              value={dateAcquired}
+              onChange={(e) => setDateAcquired(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Replace Image (optional)</Label>
+            <InputFile accept='image/*' onChange={(f) => setFile(f)} />
+          </div>
+          {error && <p className='text-red-500'>{error}</p>}
+        </div>
+        <DialogFooter>
+          <Button onClick={handleEdit}>Save Changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
-// CertificationRow component
-function CertificationRow({ item, onEdit, onDelete }: CertificationRowProps) {
-  // Use state to create the isEditOpen state
+// --- Certification Row ---
+interface CertificationRowProps {
+  certification: Certification;
+  onEdit: (
+    cert: Partial<Certification> & { _id: string; file?: File }
+  ) => Promise<Certification>;
+  onDelete: (id: string) => Promise<void>;
+}
+function CertificationRow({
+  certification,
+  onEdit,
+  onDelete,
+}: CertificationRowProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  // Return the CertificationRow component
   return (
-    <TableRow key={item._id}>
-      <TableCell>{item.title}</TableCell>
-      <TableCell>{item.certImage}</TableCell>
-      <TableCell>{item.description}</TableCell>
-      <TableCell>{item.dateAcquired.split('T')[0]}</TableCell>
+    <TableRow key={certification._id}>
+      <TableCell>{certification.title}</TableCell>
+      <TableCell>
+        {certification.fileUrl && (
+          <Image
+            src={certification.fileUrl}
+            alt={certification.title}
+            width={96}
+            height={96}
+            className='w-24 h-auto'
+          />
+        )}
+      </TableCell>
+      <TableCell>{certification.description.join(', ')}</TableCell>
+      <TableCell>{certification.dateAcquired.split('T')[0]}</TableCell>
       <TableCell className='flex gap-2'>
         <EditDialog
           isOpen={isEditOpen}
           onOpenChange={setIsEditOpen}
-          item={item}
+          certification={certification}
           onEdit={onEdit}
-          currentCertification={item.title}
         />
         <Button
-          className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'
-          onClick={() => onDelete(item._id || '')}>
+          onClick={() => onDelete(certification._id!)}
+          className='bg-red-600 hover:bg-red-700'>
           Delete
         </Button>
       </TableCell>
@@ -349,94 +285,89 @@ function CertificationRow({ item, onEdit, onDelete }: CertificationRowProps) {
   );
 }
 
-// CertificationCardProps is the props for the CertificationCard component
+// --- Main CertificationCard ---
 interface CertificationCardProps {
   title: string;
 }
-
-// Main CertificationCard component
-export function CertificationCard({
-  title,
-}: CertificationCardProps) {
-  // Use state to create the isOpen state
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Use the useQueryClient hook to create the queryClient
+export function CertificationCard({ title }: CertificationCardProps) {
   const queryClient = useQueryClient();
 
-  // Use the useQuery hook to get the certifications
-  const { data: certifications } = useQuery({
+  const { data: certifications = [] } = useQuery<Certification[]>({
     queryKey: ['certifications'],
     queryFn: getCertifications,
   });
 
-  // Use the useMutation hook to add the certification
-  const addCertificationMutation = useMutation({
+  const addMutation = useMutation<
+    Certification,
+    Error,
+    Omit<Certification, '_id' | 'fileKey' | 'fileUrl'> & { file: File }
+  >({
     mutationFn: addCertification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications'] });
-      successToast('certification', 'added');
+      successToast('Certification', 'added');
     },
-    onError: () => {
-      errorToast('certification', 'added');
-    },
+    onError: () => errorToast('Certification', 'added'),
   });
 
-  // Use the useMutation hook to edit the certification
-  const editCertificationMutation = useMutation({
+  const editMutation = useMutation<
+    Certification,
+    Error,
+    Partial<Certification> & { _id: string; file?: File }
+  >({
     mutationFn: editCertification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications'] });
-      successToast('certification', 'edited');
+      successToast('Certification', 'updated');
     },
-    onError: () => {
-      errorToast('certification', 'edited');
-    },
+    onError: () => errorToast('Certification', 'updated'),
   });
 
-  // Use the useMutation hook to delete the certification
-  const deleteCertificationMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, string>({
     mutationFn: deleteCertification,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certifications'] });
-      successToast('certification', 'deleted');
+      successToast('Certification', 'deleted');
     },
-    onError: () => {
-      errorToast('certification', 'deleted');
-    },
+    onError: () => errorToast('Certification', 'deleted'),
   });
 
-  // Return the CertificationCard component
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
   return (
-    <Card className='h-fit'>
+    <Card>
       <CardHeader>
-        <CardTitle className='text-xl'>{title}</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Certification Image</TableHead>
+              <TableHead>Image</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead>Date Acquired</TableHead>
+              <TableHead>Date</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {certifications?.map((item) => (
+            {certifications.map((cert) => (
               <CertificationRow
-                key={item._id}
-                item={item}
-                onEdit={editCertificationMutation.mutateAsync}
-                onDelete={deleteCertificationMutation.mutateAsync}
+                key={cert._id}
+                certification={cert}
+                onEdit={editMutation.mutateAsync}
+                onDelete={deleteMutation.mutateAsync}
               />
             ))}
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter className='flex justify-center'>
-        <AddDialog isOpen={isOpen} onOpenChange={setIsOpen} onAdd={addCertificationMutation.mutateAsync} />
+      <CardFooter>
+        <AddDialog
+          isOpen={isAddOpen}
+          onOpenChange={setIsAddOpen}
+          onAdd={addMutation.mutateAsync}
+        />
       </CardFooter>
     </Card>
   );

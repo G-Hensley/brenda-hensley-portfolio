@@ -13,14 +13,27 @@ dotenv.config();
 // Create the express app
 const app = express();
 
-// Set up Middleware
-app.use(helmet());
-app.use(cors({
-  origin: '*',
+const corsOptions = {
+  origin: 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
+
+// Basic CORS setup - do this BEFORE any other middleware
+app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
+
+// Then add other middleware
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+  })
+);
+
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.json());
 app.use((req, res, next) => {
@@ -32,7 +45,7 @@ app.use((req, res, next) => {
 app.use('/api', routes);
 
 // Define the port
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 4992;
 
 // Set up the database connection
 if (process.env.NODE_ENV !== 'test') {
@@ -55,8 +68,8 @@ app.get('/api/health', (req, res) => {
 
 // Start the server if not in test mode
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(port || 3001, () => {
-    console.log(`Server is running on port ${port || 3001}`);
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
   });
 }
 

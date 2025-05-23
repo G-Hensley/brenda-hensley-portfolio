@@ -3,209 +3,177 @@ import { getSession } from 'next-auth/react';
 
 const baseUrl = 'http://localhost:4992/api';
 
-// Function to get the session token, test if it is valid, and return the token
-const getToken = async (): Promise<string> => {
+const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const session = await getSession();
   const token = session?.user?.token;
-  if (!token) {
-    throw new Error('No authentication token found');
+
+  const hasBody = Boolean(options.body);
+  const headers: Record<string, string> = {};
+  if (hasBody && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
   }
-  return token;
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+    credentials: 'include', // you can drop this if you switch to pure JWT auth
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed: ${await response.text()}`);
+  }
+  return response;
 };
 
-// Get all skills from the database
 export const getSkills = async (): Promise<Skill[]> => {
-  const response = await fetch(`${baseUrl}/skills`);
-  const data = await response.json();
+  const res = await fetchWithAuth(`${baseUrl}/skills`);
+  const data = await res.json();
   return data.skills;
 };
 
-// Get all projects from the database
 export const getProjects = async (): Promise<Project[]> => {
-  const response = await fetch(`${baseUrl}/projects`);
-  const data = await response.json();
+  const res = await fetchWithAuth(`${baseUrl}/projects`);
+  const data = await res.json();
   return data.projects;
 };
 
-// Get all certifications from the database
-export const getCertifications = async (): Promise<Certification[]> => {
-  const response = await fetch(`${baseUrl}/certs`);
-  const data = await response.json();
-  return data.certs;
-};
-
-// Get all blogs from the database
 export const getBlogs = async (): Promise<Blog[]> => {
-  const response = await fetch(`${baseUrl}/blogs`);
-  const data = await response.json();
+  const res = await fetchWithAuth(`${baseUrl}/blogs`);
+  const data = await res.json();
   return data.blogs;
 };
 
-// Add a new skill to the database
-export const addSkill = async (skill: Skill): Promise<Skill> => {
-  const token = await getToken();
-
-  const response = await fetch(`${baseUrl}/skills/admin`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(skill),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Error response:', errorText);
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.skill;
-};
-
-// Add a new project to the database
-export const addProject = async (project: Project): Promise<Project> => {
-  const token = await getToken();
-
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
-
-  const response = await fetch(`${baseUrl}/projects/admin`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(project),
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Error response:', errorText);
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  const data = await response.json();
-  return data.project;
-};
-
-// Add a new certification to the database
-export const addCertification = async (
-  certification: Certification
-): Promise<Certification> => {
-  const token = await getToken();
-
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
-  const response = await fetch(`${baseUrl}/certs/admin`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(certification),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Error response:', errorText);
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-  const data = await response.json();
+export const getCertifications = async (): Promise<Certification[]> => {
+  const res = await fetchWithAuth(`${baseUrl}/certs`);
+  const data = await res.json();
   return data.certs;
 };
 
-// Edit a skill in the database
-export const editSkill = async (skill: Skill): Promise<Skill> => {
-  const token = await getToken();
-
-  const response = await fetch(`${baseUrl}/skills/admin/${skill._id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+export const addSkill = async (skill: Skill): Promise<Skill> => {
+  const res = await fetchWithAuth(`${baseUrl}/skills/admin`, {
+    method: 'POST',
     body: JSON.stringify(skill),
   });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Error response:', errorText);
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.skill;
+  return (await res.json()).skill;
 };
 
-// Edit a project in the database
-export const editProject = async (project: Project): Promise<Project> => {
-  const token = await getToken();
-
-  const response = await fetch(`${baseUrl}/projects/admin/${project._id}`, {
+export const editSkill = async (skill: Skill): Promise<Skill> => {
+  const res = await fetchWithAuth(`${baseUrl}/skills/admin/${skill._id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    body: JSON.stringify(skill),
+  });
+  return (await res.json()).skill;
+};
+
+export const deleteSkill = async (id: string): Promise<void> => {
+  await fetchWithAuth(`${baseUrl}/skills/admin/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const addProject = async (project: Project): Promise<Project> => {
+  const res = await fetchWithAuth(`${baseUrl}/projects/admin`, {
+    method: 'POST',
     body: JSON.stringify(project),
   });
-  const data = await response.json();
-  return data.project;
+  return (await res.json()).project;
 };
 
-// Edit a certification in the database
-export const editCertification = async (
-  certification: Certification
-): Promise<Certification> => {
-  const token = await getToken();
-
-  const response = await fetch(`${baseUrl}/certs/admin/${certification._id}`, {
+export const editProject = async (project: Project): Promise<Project> => {
+  const res = await fetchWithAuth(`${baseUrl}/projects/admin/${project._id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(certification),
+    body: JSON.stringify(project),
   });
-  const data = await response.json();
-  return data.certification;
+  return (await res.json()).project;
 };
 
-// Delete a skill from the database
-export const deleteSkill = async (id: string): Promise<void> => {
-  const token = await getToken();
-
-  await fetch(`${baseUrl}/skills/admin/${id}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
-// Delete a project from the database
 export const deleteProject = async (id: string): Promise<void> => {
-  const token = await getToken();
-
-  await fetch(`${baseUrl}/projects/admin/${id}`, {
+  await fetchWithAuth(`${baseUrl}/projects/admin/${id}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };
 
-// Delete a certification from the database
-export const deleteCertification = async (id: string): Promise<void> => {
-  const token = await getToken();
+// ————————————————
+// NEW: Certification & S3 integration
+// ————————————————
 
-  await fetch(`${baseUrl}/certs/admin/${id}`, {
+// 1) helper to upload the file to S3 and get back key+url
+async function uploadCertImage(
+  file: File
+): Promise<{ key: string; url: string }> {
+  const form = new FormData();
+  form.append('file', file);
+
+  const res = await fetchWithAuth(`${baseUrl}/s3/certImages`, {
+    method: 'POST',
+    body: form,
+  });
+
+  return res.json();
+}
+
+// 2) add a new cert (must include a File on certification.file)
+export const addCertification = async (
+  certification: Omit<Certification, 'fileKey' | 'fileUrl' | '_id'> & {
+    file: File;
+  }
+): Promise<Certification> => {
+  const { key, url } = await uploadCertImage(certification.file);
+
+  const payload = {
+    title: certification.title,
+    description: certification.description,
+    dateAcquired: certification.dateAcquired,
+    fileKey: key,
+    fileUrl: url,
+  };
+
+  const res = await fetchWithAuth(`${baseUrl}/certs/admin`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+
+  return (await res.json()).cert;
+};
+
+// 4) edit an existing cert (file is optional)
+export const editCertification = async (
+  certification: Partial<Omit<Certification, 'fileKey' | 'fileUrl'>> & {
+    _id: string;
+    file?: File;
+    fileKey?: string;
+    fileUrl?: string;
+  }
+): Promise<Certification> => {
+  const payload: Certification = {
+    title: certification.title ?? '',
+    description: certification.description ?? [],
+    dateAcquired: certification.dateAcquired ?? '',
+    fileKey: certification.fileKey ?? '',
+    fileUrl: certification.fileUrl ?? '',
+  };
+
+  if (certification.file) {
+    const { key, url } = await uploadCertImage(certification.file);
+    payload.fileKey = key;
+    payload.fileUrl = url;
+  }
+
+  const res = await fetchWithAuth(
+    `${baseUrl}/certs/admin/${certification._id}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    }
+  );
+
+  return (await res.json()).cert;
+};
+
+// 5) delete a cert
+export const deleteCertification = async (id: string): Promise<void> => {
+  await fetchWithAuth(`${baseUrl}/certs/admin/${id}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 };
