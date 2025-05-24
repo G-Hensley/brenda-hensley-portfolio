@@ -16,7 +16,7 @@ function AdminContent() {
   }
 
   return (
-    <main className='flex flex-col items-center h-screen bg-gradient-to-br from-neutral-900 to-neutral-800 text-white p-8 gap-4'>
+    <main className='flex flex-col items-center min-h-svh h-fit bg-gradient-to-br from-neutral-900 to-neutral-800 text-white p-8 gap-4'>
       <header className='flex flex-col items-center gap-4'>
         <h1 className='text-4xl font-bold'>Admin Dashboard</h1>
         <h2 className='text-2xl'>Welcome {session.user?.name}</h2>
