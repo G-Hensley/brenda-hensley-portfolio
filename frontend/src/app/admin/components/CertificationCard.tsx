@@ -342,7 +342,7 @@ export function CertificationCard({ title }: CertificationCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className='text-xl'>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
