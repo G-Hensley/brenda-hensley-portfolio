@@ -30,7 +30,7 @@ export function CursorGlow({ color }: CursorGlowProps) {
 
   return (
     <motion.div
-      className='fixed -top-20 -left-20 pointer-events-none z-50'
+      className='fixed -top-20 -left-20 pointer-events-none z-20'
       style={{
         x: smoothX,
         y: smoothY,
