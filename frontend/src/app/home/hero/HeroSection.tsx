@@ -61,7 +61,7 @@ export function HeroSection() {
             'root@brenda-hensley:~$ Pentester',
             2000,
             'root@brenda-hensley:~$ App Security Engineer',
-            3000,
+            4000,
             'root@brenda-hensley:~$ Red Team Operator',
             2500,
           ]}
@@ -74,18 +74,18 @@ export function HeroSection() {
       </div>
       )}
 
-      <motion.p
-        className={`mt-4 text-lg md:text-2xl font-mono text-red-400 ${electrolize.className}`}
+      <motion.h2
+        className={`mt-4 text-lg md:text-4xl font-mono text-green-600 ${electrolize.className}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          delay: 2.2, // delay until typing is mostly done
-          duration: 0.6,
+          delay: 5,
+          duration: 1,
           ease: 'easeOut',
         }}
       >
         # I break systems so others can&apos;t.
-      </motion.p>
+      </motion.h2>
       
     </section>
   );
