@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef, useState } from 'react';
 import { Electrolize } from 'next/font/google';
 import { TypeAnimation } from 'react-type-animation';
 import ProjectCard from '../components/ProjectCard';
