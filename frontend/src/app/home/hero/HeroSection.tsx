@@ -1,8 +1,10 @@
 // Hero Section for the home page
 
+'use client';
+
 // Import the components
 import { useState, useEffect } from 'react';
-
+import { CursorGlow } from '@/components/CursorGlow';
 import { TypeAnimation } from 'react-type-animation';
 import { Share_Tech_Mono, Electrolize } from 'next/font/google';
 import { motion } from 'framer-motion';
@@ -20,7 +22,6 @@ const electrolize = Electrolize({
 });
 
 export function HeroSection() {
-
   // State to show the "whoami"
   const [showWhoami, setShowWhoami] = useState(true);
 
@@ -34,44 +35,46 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className='text-white p-8 gap-8 h-screen flex flex-col items-center justify-center'>
+    <section className='text-white p-8 gap-8 h-screen flex flex-col items-center justify-center relative'>
 
       {showWhoami && (
-        <div className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
-        <TypeAnimation
-          sequence={[
-            '> whoami',
-            1000,
-            '', // delete whoami
-          ]}
-          wrapper="span"
-          speed={50}
-          cursor={false}
-          repeat={0}
-        />
-        <span className="text-red-500 animate-blink">_</span>
-      </div>
+        <div
+          className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
+          <TypeAnimation
+            sequence={[
+              '> whoami',
+              1000,
+              '', // delete whoami
+            ]}
+            wrapper='span'
+            speed={50}
+            cursor={false}
+            repeat={0}
+          />
+          <span className='text-red-500 animate-blink'>_</span>
+        </div>
       )}
-      
+
       {!showWhoami && (
-        <div className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
-        <TypeAnimation
-          sequence={[
-            1000,
-            'root@brenda-hensley:~$ Pentester',
-            2000,
-            'root@brenda-hensley:~$ App Security Engineer',
-            4000,
-            'root@brenda-hensley:~$ Red Team Operator',
-            2500,
-          ]}
-          wrapper="span"
-          speed={50}
-          cursor={false}
-          repeat={0}
-        />
-        <span className="text-red-500 animate-blink">_</span>
-      </div>
+        <div
+          className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
+          <TypeAnimation
+            sequence={[
+              1000,
+              'root@brenda-hensley:~$ Pentester',
+              2000,
+              'root@brenda-hensley:~$ App Security Engineer',
+              4000,
+              'root@brenda-hensley:~$ Red Team Operator',
+              2500,
+            ]}
+            wrapper='span'
+            speed={50}
+            cursor={false}
+            repeat={0}
+          />
+          <span className='text-red-500 animate-blink'>_</span>
+        </div>
       )}
 
       <motion.h2
@@ -82,12 +85,10 @@ export function HeroSection() {
           delay: 5,
           duration: 1,
           ease: 'easeOut',
-        }}
-      >
+        }}>
         # I break systems so others can&apos;t.
       </motion.h2>
-      
+      <CursorGlow color='red' />
     </section>
   );
-
 }
