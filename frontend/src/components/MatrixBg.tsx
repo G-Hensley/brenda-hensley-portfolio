@@ -35,7 +35,7 @@ export default function MatrixBackground() {
     }
 
     // Colors for the characters
-    const colors = ["#ff0000", "#00ff00"]
+    const colors = ["#ff0000", "#00ff00", "#11ff00"]
 
     // Drawing the characters
     const draw = () => {
@@ -65,7 +65,7 @@ export default function MatrixBackground() {
     }
 
     // Animation loop
-    const interval = setInterval(draw, 50)
+    const interval = setInterval(draw, 55)
 
     return () => {
       clearInterval(interval)
