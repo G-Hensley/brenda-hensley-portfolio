@@ -41,7 +41,7 @@ export function SkillsScroll() {
               transition={{ type: 'spring', stiffness: 180, damping: 50, delay: index * 0.05, duration: 4 }}
               key={`${skill._id || skill.title}-${index}`}
               viewport={{ once: true }}
-              className={`px-6 py-2 text-sm md:text-lg font-mono rounded-full glow-red border border-red-950 bg-red-900/30 shadow shadow-red-500/30 text-white mx-4 ${electrolize.className}`}
+              className={`px-6 py-2 text-sm md:text-lg text-tra font-mono rounded-full glow-red border border-red-950 bg-red-900/30 shadow shadow-red-500/30 text-white mx-4 ${electrolize.className}`}
             >
               {skill.title}
             </motion.div>

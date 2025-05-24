@@ -44,7 +44,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       {showWhoami && (
         <div
-          className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
+          className={`text-left text-3xl md:text-6xl title-outline text-transparent font-mono text-red-500 ${shareTechMono.className}`}>
           <TypeAnimation
             sequence={[
               '> whoami',
@@ -62,7 +62,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       {!showWhoami && (
         <div
-          className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
+          className={`text-left text-3xl title-outline text-transparent md:text-6xl font-mono ${shareTechMono.className}`}>
           <TypeAnimation
             sequence={[
               1000,
