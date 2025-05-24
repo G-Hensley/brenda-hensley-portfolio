@@ -40,7 +40,7 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
         <span className='text-green-500 animate-blink'>_</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="flex flex-wrap justify-center w-full gap-8">
         {certs.map((cert, index) => (
           <CertCard key={cert._id} cert={cert} index={index} />
         ))}
