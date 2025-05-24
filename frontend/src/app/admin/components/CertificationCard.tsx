@@ -89,9 +89,9 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>Add Certification</Button>
+        <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer mx-auto'>Add Certification</Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-lg'>
+      <DialogContent className='sm:max-w-lg bg-neutral-900 text-white'>
         <DialogHeader>
           <DialogTitle>Add Certification</DialogTitle>
           <DialogDescription>
@@ -159,6 +159,8 @@ function EditDialog({
   certification,
   onEdit,
 }: EditDialogProps) {
+
+  // --- State Variables ---
   const [title, setTitle] = useState(certification.title);
   const [description, setDescription] = useState<string>(
     certification.description.join(', ')
@@ -169,6 +171,7 @@ function EditDialog({
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // --- Edit Certification ---
   const handleEdit = async () => {
     if (!title || !dateAcquired) {
       setError('Title and date are required');
@@ -191,6 +194,7 @@ function EditDialog({
     }
   };
 
+  // --- Render ---
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -334,6 +338,7 @@ export function CertificationCard({ title }: CertificationCardProps) {
 
   const [isAddOpen, setIsAddOpen] = useState(false);
 
+  // --- Render ---
   return (
     <Card>
       <CardHeader>

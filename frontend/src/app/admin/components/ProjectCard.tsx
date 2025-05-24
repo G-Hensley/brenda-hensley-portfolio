@@ -44,13 +44,17 @@ export function ProjectCard({
   const [addableProject, setAddableProject] = useState<Project>({
     title: '',
     description: '',
-    image: '',
+    fileUrl: '',
+    fileKey: '',
+    skills: [],
     link: '',
   });
   const [editableProject, setEditableProject] = useState<Project>({
     _id: '',
     title: '',
-    image: '',
+    fileUrl: '',
+    fileKey: '',
+    skills: [],
     description: '',
     link: '',
   });
@@ -58,6 +62,8 @@ export function ProjectCard({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentProject, setCurrentProject] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
+  const [skillsInput, setSkillsInput] = useState<string>('');
 
   const queryClient = useQueryClient();
 
@@ -102,24 +108,44 @@ export function ProjectCard({
     },
   });
   
-  // Handle adding a project
   const handleAddProject = async () => {
     try {
-      if (addableProject.title.trim()) {
-        await addProjectMutation.mutateAsync(addableProject);
-        setAddableProject({
-          title: '',
-          image: '',
-          description: '',
-          link: '',
-        });
-        setIsOpen(false);
-        setError(null);
+      if (!addableProject.title.trim() || !file) {
+        setError('Title and image are required');
+        return;
       }
+  
+      // Upload file to S3
+      const form = new FormData();
+      form.append('file', file);
+      const uploadRes = await fetch(`${baseUrl}/s3/projectImages`, {
+        method: 'POST',
+        body: form,
+      });
+      const { key, url } = await uploadRes.json();
+  
+      await addProjectMutation.mutateAsync({
+        ...addableProject,
+        fileKey: key,
+        fileUrl: url,
+        skills: skillsInput.split(',').map((s) => s.trim()).filter(Boolean),
+      });
+  
+      // Reset state
+      setAddableProject({
+        title: '',
+        description: '',
+        fileKey: '',
+        fileUrl: '',
+        skills: [],
+        link: '',
+      });
+      setSkillsInput('');
+      setFile(null);
+      setIsOpen(false);
+      setError(null);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to add project'
-      );
+      setError(err instanceof Error ? err.message : 'Failed to add project');
     }
   };
 
@@ -131,7 +157,9 @@ export function ProjectCard({
         const project = {
           _id: id,
           title: editableProject.title,
-          image: editableProject.image,
+          fileUrl: editableProject.fileUrl,
+          fileKey: editableProject.fileKey,
+          skills: editableProject.skills,
           description: editableProject.description,
           link: editableProject.link,
         };
@@ -139,7 +167,9 @@ export function ProjectCard({
         setEditableProject({
           _id: '',
           title: '',
-          image: '',
+          fileUrl: '',
+          fileKey: '',
+          skills: [],
           description: '',
           link: '',
         });
@@ -165,13 +195,14 @@ export function ProjectCard({
 
   return (
     <Card className='h-fit'>
-      {isLoading ? <PulseLoader color='#000000' /> : (
+      {isLoading ? (
+        <PulseLoader color='#000000' />
+      ) : (
         <div>
           <CardHeader>
             <CardTitle className='text-xl'>{title}</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* Table for the skills */}
             <Table>
               <TableHeader>
                 <TableRow>
@@ -179,6 +210,7 @@ export function ProjectCard({
                   <TableHead>Image</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Link</TableHead>
+                  <TableHead>Skills</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -186,13 +218,26 @@ export function ProjectCard({
                 {projects?.map((item: Project) => (
                   <TableRow key={item._id}>
                     <TableCell>{item.title}</TableCell>
-                    <TableCell>{item.image}</TableCell>
+                    <TableCell>
+                      {item.fileUrl && (
+                        <img
+                          src={item.fileUrl}
+                          alt={item.title}
+                          className='w-24 h-auto rounded shadow'
+                        />
+                      )}
+                    </TableCell>
                     <TableCell>{item.description}</TableCell>
                     <TableCell>{item.link}</TableCell>
+                    <TableCell>{item.skills.join(', ')}</TableCell>
                     <TableCell className='flex gap-2'>
                       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                         <DialogTrigger asChild>
-                          <Button onClick={() => {setCurrentProject("'" + item.title + "'");}} className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
+                          <Button
+                            onClick={() =>
+                              setCurrentProject("'" + item.title + "'")
+                            }
+                            className='bg-neutral-800 text-white hover:bg-neutral-900'>
                             Edit
                           </Button>
                         </DialogTrigger>
@@ -200,45 +245,67 @@ export function ProjectCard({
                           <DialogHeader>
                             <DialogTitle>Edit Project</DialogTitle>
                             <DialogDescription>
-                              Edit the project: {currentProject} in the database.
+                              Edit the project: {currentProject}
                             </DialogDescription>
                           </DialogHeader>
                           <div className='gap-4 py-4'>
                             <div className='flex flex-col gap-4'>
-                              {Object.keys(item).map((key) => (
-                                key !== '_id' && key !== '__v' && (
-                                  <div className='flex flex-col gap-2' key={key}>
-                                    <Label htmlFor={key} className='text-right'>
-                                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                                  </Label>
-                                  <Input
-                                    id={key}
-                                    value={editableProject[key as keyof Project]}
-                                    placeholder={item[key as keyof Project]}
-                                    className='col-span-3'
-                                    onChange={(e) =>
-                                      setEditableProject({
-                                        ...editableProject,
-                                        [key]: e.target.value,
-                                      })
-                                    }
-                                  />
-                                </div>
-                                )))}
+                              <Input
+                                value={editableProject.title}
+                                onChange={(e) =>
+                                  setEditableProject({
+                                    ...editableProject,
+                                    title: e.target.value,
+                                  })
+                                }
+                                placeholder='Title'
+                              />
+                              <Input
+                                value={editableProject.description}
+                                onChange={(e) =>
+                                  setEditableProject({
+                                    ...editableProject,
+                                    description: e.target.value,
+                                  })
+                                }
+                                placeholder='Description'
+                              />
+                              <Input
+                                value={editableProject.link}
+                                onChange={(e) =>
+                                  setEditableProject({
+                                    ...editableProject,
+                                    link: e.target.value,
+                                  })
+                                }
+                                placeholder='Link'
+                              />
+                              <Input
+                                value={editableProject.skills.join(', ')}
+                                onChange={(e) =>
+                                  setEditableProject({
+                                    ...editableProject,
+                                    skills: e.target.value
+                                      .split(',')
+                                      .map((s) => s.trim()),
+                                  })
+                                }
+                                placeholder='Comma-separated skills'
+                              />
                             </div>
                           </div>
                           <DialogFooter>
                             <Button
                               type='submit'
                               onClick={() => handleEditProject(item)}
-                              className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                              className='bg-blue-900 text-white hover:bg-blue-950'>
                               Save changes
                             </Button>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
                       <Button
-                        className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'
+                        className='bg-red-900 text-white hover:bg-red-950'
                         onClick={() => handleDeleteProject(item._id || '')}>
                         Delete
                       </Button>
@@ -248,49 +315,73 @@ export function ProjectCard({
               </TableBody>
             </Table>
           </CardContent>
-
+  
           <CardFooter className='flex justify-center'>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer mt-4'>
+                <Button className='bg-blue-900 text-white hover:bg-blue-950 mt-4'>
                   Add
                 </Button>
               </DialogTrigger>
               <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
                 <DialogHeader>
-                  <DialogTitle>Add Certification</DialogTitle>
+                  <DialogTitle>Add Project</DialogTitle>
                   <DialogDescription>
-                    Add a new project to the database.
+                    Upload an image and provide project details.
                   </DialogDescription>
                 </DialogHeader>
                 <div className='grid gap-4 py-4'>
-                  <div className='flex flex-col gap-4'>
-                    {Object.keys(addableProject).map((key) => (
-                      <div className='flex flex-col gap-2' key={key}>
-                        <Label htmlFor={key} className='text-right'>
-                          {key.charAt(0).toUpperCase() + key.slice(1)}
-                        </Label>
-                        <Input
-                          id={key}
-                          value={addableProject[key as keyof Project]}
-                          className='col-span-3'
-                          onChange={(e) =>
-                            setAddableProject({
-                              ...addableProject,
-                              [key]: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                    ))}
-                  </div>
+                  <Input
+                    placeholder='Title'
+                    value={addableProject.title}
+                    onChange={(e) =>
+                      setAddableProject({
+                        ...addableProject,
+                        title: e.target.value,
+                      })
+                    }
+                  />
+                  <Input
+                    placeholder='Description'
+                    value={addableProject.description}
+                    onChange={(e) =>
+                      setAddableProject({
+                        ...addableProject,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                  <Input
+                    placeholder='Link'
+                    value={addableProject.link}
+                    onChange={(e) =>
+                      setAddableProject({
+                        ...addableProject,
+                        link: e.target.value,
+                      })
+                    }
+                  />
+                  <Input
+                    placeholder='Comma-separated skills'
+                    value={skillsInput}
+                    onChange={(e) => setSkillsInput(e.target.value)}
+                  />
+                  <Input
+                    type='file'
+                    accept='image/*'
+                    onChange={(e) => {
+                      if (e.target.files?.[0]) {
+                        setFile(e.target.files[0]);
+                      }
+                    }}
+                  />
                   {error && <div className='text-red-500 text-sm'>{error}</div>}
                 </div>
                 <DialogFooter>
                   <Button
                     type='submit'
                     onClick={handleAddProject}
-                    className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
+                    className='bg-blue-900 text-white hover:bg-blue-950'>
                     Save
                   </Button>
                 </DialogFooter>

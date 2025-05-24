@@ -5,10 +5,6 @@ const certSchema = new Schema({
     type: String,
     required: true,
   },
-  certImage: {
-    type: String,
-    required: true,
-  },
   description: {
     type: [String],
     required: true,
@@ -20,7 +16,11 @@ const certSchema = new Schema({
   fileUrl: {
     type: String,
     required: false,
-  }
+  },
+  fileKey: {
+    type: String,
+    required: false,
+  },
 });
 
 const Cert = model('Cert', certSchema);

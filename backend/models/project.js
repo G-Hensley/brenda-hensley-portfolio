@@ -5,16 +5,24 @@ const projectSchema = new Schema({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-    required: true,
-  },
   description: {
     type: String,
     required: true,
   },
   link: {
     type: String,
+    required: true,
+  },
+  fileUrl: {
+    type: String,
+    required: true,
+  },
+  fileKey: {
+    type: String,
+    required: true,
+  },
+  skills: {
+    type: [String],
     required: true,
   },
 });

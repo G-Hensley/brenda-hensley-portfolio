@@ -94,32 +94,36 @@ export const deleteProject = async (id: string): Promise<void> => {
   });
 };
 
-// ————————————————
-// NEW: Certification & S3 integration
-// ————————————————
+// ———————————————————————————————
+// Unified S3 Upload + Certification & Project API
+// ———————————————————————————————
 
-// 1) helper to upload the file to S3 and get back key+url
-async function uploadCertImage(
+type UploadFolder = 'certs' | 'projects';
+
+async function uploadImageToS3(
+  folder: UploadFolder,
   file: File
 ): Promise<{ key: string; url: string }> {
   const form = new FormData();
   form.append('file', file);
 
-  const res = await fetchWithAuth(`${baseUrl}/s3/certImages`, {
+  const res = await fetch(`${baseUrl}/s3/${folder}`, {
     method: 'POST',
     body: form,
   });
 
+  if (!res.ok) throw new Error(`Failed to upload ${folder} image`);
   return res.json();
 }
 
-// 2) add a new cert (must include a File on certification.file)
+// ——— CERTIFICATIONS ———
+
 export const addCertification = async (
   certification: Omit<Certification, 'fileKey' | 'fileUrl' | '_id'> & {
     file: File;
   }
 ): Promise<Certification> => {
-  const { key, url } = await uploadCertImage(certification.file);
+  const { key, url } = await uploadImageToS3('certs', certification.file);
 
   const payload = {
     title: certification.title,
@@ -137,7 +141,6 @@ export const addCertification = async (
   return (await res.json()).cert;
 };
 
-// 4) edit an existing cert (file is optional)
 export const editCertification = async (
   certification: Partial<Omit<Certification, 'fileKey' | 'fileUrl'>> & {
     _id: string;
@@ -155,25 +158,78 @@ export const editCertification = async (
   };
 
   if (certification.file) {
-    const { key, url } = await uploadCertImage(certification.file);
+    const { key, url } = await uploadImageToS3('certs', certification.file);
     payload.fileKey = key;
     payload.fileUrl = url;
   }
 
-  const res = await fetchWithAuth(
-    `${baseUrl}/certs/admin/${certification._id}`,
-    {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    }
-  );
+  const res = await fetchWithAuth(`${baseUrl}/certs/admin/${certification._id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
 
   return (await res.json()).cert;
 };
 
-// 5) delete a cert
 export const deleteCertification = async (id: string): Promise<void> => {
   await fetchWithAuth(`${baseUrl}/certs/admin/${id}`, {
     method: 'DELETE',
   });
+};
+
+// ——— PROJECTS ———
+
+export const addProjectWithImage = async (
+  project: Omit<Project, 'fileKey' | 'fileUrl' | '_id'> & {
+    file: File;
+  }
+): Promise<Project> => {
+  const { key, url } = await uploadImageToS3('projects', project.file);
+
+  const payload = {
+    title: project.title,
+    description: project.description,
+    skills: project.skills,
+    link: project.link,
+    fileKey: key,
+    fileUrl: url,
+  };
+
+  const res = await fetchWithAuth(`${baseUrl}/projects/admin`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+
+  return (await res.json()).project;
+};
+
+export const editProjectWithImage = async (
+  project: Partial<Omit<Project, 'fileKey' | 'fileUrl'>> & {
+    _id: string;
+    file?: File;
+    fileKey?: string;
+    fileUrl?: string;
+  }
+): Promise<Project> => {
+  const payload: Project = {
+    title: project.title ?? '',
+    description: project.description ?? '',
+    skills: project.skills ?? [],
+    link: project.link ?? '',
+    fileKey: project.fileKey ?? '',
+    fileUrl: project.fileUrl ?? '',
+  };
+
+  if (project.file) {
+    const { key, url } = await uploadImageToS3('projects', project.file);
+    payload.fileKey = key;
+    payload.fileUrl = url;
+  }
+
+  const res = await fetchWithAuth(`${baseUrl}/projects/admin/${project._id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
+
+  return (await res.json()).project;
 };

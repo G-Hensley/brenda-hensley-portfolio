@@ -23,15 +23,17 @@ router.get('/', async (req, res) => {
 // Admin Route - Create new project
 router.post('/admin', authenticate, async (req, res) => {
   // Get the project data from the body request
-  const { title, image, description, link } = req.body;
+  const { title, description, link, fileUrl, fileKey, skills } = req.body;
 
   // Try to create a new project
   try {
     const newProject = new Project({
       title,
-      image,
       description,
       link,
+      fileUrl,
+      fileKey,
+      skills,
     });
     const savedProject = await newProject.save();
     res.status(201).json(savedProject);
@@ -45,13 +47,13 @@ router.post('/admin', authenticate, async (req, res) => {
 // Admin Route - Update project by id
 router.put('/admin/:id', authenticate, async (req, res) => {
   // Get the project data from the body request
-  const { title, image, description, link } = req.body;
+  const { title, description, link, fileUrl, fileKey, skills } = req.body;
 
   // Try to update the project
   try {
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.id,
-      { title, image, description, link },
+      { title, description, link, fileUrl, fileKey, skills },
       { new: true }
     );
     res.status(200).json(updatedProject);

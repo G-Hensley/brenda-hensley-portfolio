@@ -8,9 +8,11 @@ export interface Skill {
 export interface Project {
   _id?: string;
   title: string;
-  image: string;
   description: string;
   link: string;
+  fileUrl: string;
+  fileKey: string;
+  skills: string[];
 }
 
 // Certification interface
