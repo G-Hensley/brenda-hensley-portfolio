@@ -3,11 +3,12 @@
 'use client';
 
 // Import the components
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
 import { TypeAnimation } from 'react-type-animation';
 import { Share_Tech_Mono, Electrolize } from 'next/font/google';
 import { motion } from 'framer-motion';
+import MatrixBackground from '@/components/MatrixBg';
 
 const shareTechMono = Share_Tech_Mono({
   weight: ['400'],
@@ -21,7 +22,7 @@ const electrolize = Electrolize({
   variable: '--font-electrolize',
 });
 
-export function HeroSection() {
+export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
   // State to show the "whoami"
   const [showWhoami, setShowWhoami] = useState(true);
 
@@ -35,7 +36,11 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className='text-white p-8 gap-8 h-screen flex flex-col items-center justify-center relative'>
+    <section
+      className='text-white p-8 gap-8 h-screen flex flex-col items-center justify-center z-10'
+      ref={ref}>
+      <MatrixBackground />
+      <CursorGlow color='red' />
 
       {showWhoami && (
         <div
@@ -88,7 +93,9 @@ export function HeroSection() {
         }}>
         # I break systems so others can&apos;t.
       </motion.h2>
-      <CursorGlow color='red' />
+      
     </section>
   );
-}
+});
+
+HeroSection.displayName = 'HeroSection';

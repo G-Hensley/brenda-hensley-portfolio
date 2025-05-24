@@ -36,7 +36,10 @@ export function CursorGlow({ color }: CursorGlowProps) {
         y: smoothY,
       }}>
       <div
-        className={`w-40 h-40 rounded-full bg-${color}-500 opacity-30 blur-3xl mix-blend-screen`}
+        className={`w-40 h-40 rounded-full opacity-30 blur-3xl mix-blend-screen`}
+        style={{
+          backgroundColor: color,
+        }}
       />
     </motion.div>
   );
