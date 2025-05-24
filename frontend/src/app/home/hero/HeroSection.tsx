@@ -4,12 +4,19 @@
 import { useState, useEffect } from 'react';
 
 import { TypeAnimation } from 'react-type-animation';
-import { Share_Tech_Mono } from 'next/font/google';
+import { Share_Tech_Mono, Electrolize } from 'next/font/google';
+import { motion } from 'framer-motion';
 
 const shareTechMono = Share_Tech_Mono({
   weight: ['400'],
   subsets: ['latin'],
   variable: '--font-share-tech-mono',
+});
+
+const electrolize = Electrolize({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--font-electrolize',
 });
 
 export function HeroSection() {
@@ -27,7 +34,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className='text-white p-8 gap-4 h-screen flex flex-col items-center justify-center'>
+    <section className='text-white p-8 gap-8 h-screen flex flex-col items-center justify-center'>
 
       {showWhoami && (
         <div className={`text-left text-3xl md:text-6xl font-mono text-red-500 ${shareTechMono.className}`}>
@@ -66,6 +73,19 @@ export function HeroSection() {
         <span className="text-red-500 animate-blink">_</span>
       </div>
       )}
+
+      <motion.p
+        className={`mt-4 text-lg md:text-2xl font-mono text-red-400 ${electrolize.className}`}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 2.2, // delay until typing is mostly done
+          duration: 0.6,
+          ease: 'easeOut',
+        }}
+      >
+        # I break systems so others can&apos;t.
+      </motion.p>
       
     </section>
   );
