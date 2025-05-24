@@ -9,6 +9,7 @@ import { TypeAnimation } from 'react-type-animation';
 import { Share_Tech_Mono, Electrolize } from 'next/font/google';
 import { motion } from 'framer-motion';
 import MatrixBackground from '@/components/MatrixBg';
+import Image from 'next/image';
 
 const shareTechMono = Share_Tech_Mono({
   weight: ['400'],
@@ -41,6 +42,18 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
       ref={ref}>
       <MatrixBackground />
       <CursorGlow color='red' />
+
+      <motion.div
+        className='flex flex-col items-center justify-center'
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 5,
+          duration: 1,
+          ease: 'easeOut',
+        }}>
+        <Image src={'/avatar.png'} alt="Brenda Hensley Avatar" width={140} height={140} className='rounded-full' />
+      </motion.div>
 
       {showWhoami && (
         <div
