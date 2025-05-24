@@ -33,7 +33,7 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
       data-section='green'>
         <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" />
           <CursorGlow color='green' />
-          <div className={`text-left text-3xl md:text-6xl font-mono text-green-600 ${electrolize.className} z-10`}>
+          <div className={`text-left text-3xl md:text-6xl text-green-600 ${electrolize.className} z-10`}>
             <TypeAnimation
               sequence={['# Certifications', 1000]}
               speed={50}

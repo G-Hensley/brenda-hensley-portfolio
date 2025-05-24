@@ -29,7 +29,7 @@ export function SkillsScroll() {
 
       {/* CSS-based animated scroll */}
       <div className="overflow-hidden whitespace-nowrap py-8">
-        <div className="flex animate-[scroll_40s_linear_infinite] w-max">
+        <div className="flex animate-[scroll_40s_linear_infinite] w-max hover:[animation-play-state:paused]">
           {loopedSkills.map((skill, index) => (
             <motion.div
               initial={{ opacity: 0, scale: 0.2 }}
@@ -38,7 +38,7 @@ export function SkillsScroll() {
                 scale: 1.1,
                 boxShadow: '0 0 20px #ff0000aa',
               }}
-              transition={{ type: 'spring', stiffness: 180, damping: 50, delay: index * 0.05, duration: 4 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 50, delay: index * 0.05, duration: 0.5 }}
               key={`${skill._id || skill.title}-${index}`}
               viewport={{ once: true }}
               className={`px-6 py-2 text-sm md:text-lg text-tra font-mono rounded-full glow-red border border-red-950 bg-red-900/30 shadow shadow-red-500/30 text-white mx-4 ${electrolize.className}`}

@@ -44,12 +44,12 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       {showWhoami && (
         <div
-          className={`text-left text-3xl md:text-6xl title-outline text-transparent font-mono text-red-500 ${shareTechMono.className}`}>
+          className={`text-left text-3xl md:text-6xl title-outline text-transparent font-mono ${shareTechMono.className}`}>
           <TypeAnimation
             sequence={[
               '> whoami',
               1000,
-              '', // delete whoami
+              '',
             ]}
             wrapper='span'
             speed={50}

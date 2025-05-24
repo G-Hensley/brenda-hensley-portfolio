@@ -36,7 +36,7 @@ export function CursorGlow({ color }: CursorGlowProps) {
         y: smoothY,
       }}>
       <div
-        className={`w-40 h-40 rounded-full opacity-30 blur-3xl mix-blend-screen`}
+        className={`w-28 h-28 rounded-full opacity-30 blur-3xl mix-blend-screen`}
         style={{
           backgroundColor: color,
         }}

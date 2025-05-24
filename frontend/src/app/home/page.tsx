@@ -7,6 +7,7 @@ import { HeroSection } from './hero/HeroSection';
 import { CertificationSection } from './certifications/CertificationSection';
 import { useEffect, useState, useRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
+import { ProjectsSection } from '@/app/home/projects/ProjectsSection';
 
 export default function Home() {
   // cursor glow color
@@ -51,6 +52,7 @@ export default function Home() {
       <CursorGlow color={cursorColor} />
       <HeroSection ref={redRef} />
       <CertificationSection ref={greenRef} />
+      <ProjectsSection ref={redRef} />
     </main>
   );
 }

@@ -21,8 +21,8 @@ export default function CertCard({ cert, index }: CertCardProps) {
 
   return (
     <motion.div
-      className={`bg-transparent p-4 rounded-xl border border-zinc-700 ${glowColor} shadow-lg flex flex-col items-center text-white w-72
-      hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit`}
+      className={`bg-black/50 p-4 rounded-xl border border-neutral-800 ${glowColor} shadow-lg flex flex-col items-center text-white w-72
+      hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit hover:bg-red-900/30`}
       initial={{ y: 50, scale: 0.60 }}
       whileInView={{ y: 0, scale: 1 }}
       transition={{ duration: 0.4,
@@ -38,7 +38,7 @@ export default function CertCard({ cert, index }: CertCardProps) {
         height={96}
         className="rounded object-contain"
       />
-      <div className={`bg-black/60 text-green-500 text-md w-full p-3 rounded-md font-mono whitespace-pre-wrap ${shareTechMono.className}`}>
+      <div className={`text-green-500 text-md w-full p-3 rounded-md font-mono whitespace-pre-wrap ${shareTechMono.className}`}>
         {`> Issued: ${new Date(cert.dateAcquired).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
