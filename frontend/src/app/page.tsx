@@ -4,11 +4,12 @@
 
 // Import the Home page
 import Home from './home/page';
-
+import Navbar from '@/components/Navbar';
 export default function Page() {
 
   return (
-    <main>
+    <main className='relative w-full'>
+      <Navbar />
       <Home />
     </main>
   )
