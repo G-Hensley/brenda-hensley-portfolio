@@ -4,6 +4,7 @@ import { TypeAnimation } from 'react-type-animation';
 import ProjectCard from '../components/ProjectCard';
 import { getProjects } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 
 const electrolize = Electrolize({
   weight: ['400'],
@@ -28,8 +29,26 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
         />
       </div>
       <div className="flex flex-wrap gap-8 justify-center">
-        {projects?.map((project) => (
-          <ProjectCard key={project._id} project={project} />
+        {projects?.map((project, index) => (
+          <motion.div
+            key={project._id}
+            initial={{ opacity: 0, scale: 0.5, y: 50 }}
+            whileInView={{ 
+              opacity: 1, 
+              scale: [0.5, 1.05, 1], 
+              y: [50, -10, 0], 
+              rotate: [2, -2, 0] 
+            }}
+            transition={{
+              delay: index * 0.35,
+              duration: 0.6,
+              type: 'tween',
+              ease: 'easeOut',
+            }}
+            viewport={{ once: true }}
+          >
+            <ProjectCard project={project} />
+          </motion.div>
         ))}
       </div>
     </section>

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Share_Tech_Mono, Electrolize } from "next/font/google";
 import { useState } from "react";
 import Link from "next/link";
+import { FiExternalLink } from "react-icons/fi";
 
 const shareTechMono = Share_Tech_Mono({
   weight: ['400'],
@@ -38,8 +39,9 @@ export default function ProjectCard({ project }: { project: Project }) {
         </div>
         {isHovered && (
           <div className="absolute w-full h-full flex items-center justify-center bg-black/90 rounded-xl">
-            <Link href={project.link} className="text-md text-green-600 z-30 bg-green-950/90 rounded-xl px-4 py-2
-            hover:text-green-500 hover:scale-105 transition-all duration-300 hover:shadow-sm hover:text-glow">View Project</Link>
+            <Link href={project.link} target="_blank" className={`text-md text-green-600 z-30 bg-green-950/90 rounded-xl px-4 py-2
+            hover:text-green-400 hover:scale-110 transition-all duration-300 hover:shadow-sm hover:text-glow
+            active:scale-100 ${electrolize.className} flex flex-row gap-2 items-center`}>View Project <FiExternalLink className="inline-block" /></Link>
           </div>
         )}
     </div>
