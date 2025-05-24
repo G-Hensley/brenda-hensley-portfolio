@@ -27,9 +27,11 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
           className={`text-red-500 ${electrolize.className} text-3xl md:text-6xl`}
         />
       </div>
-      {projects?.map((project) => (
-        <ProjectCard key={project._id} project={project} />
-      ))}
+      <div className="flex flex-wrap gap-8 justify-center">
+        {projects?.map((project) => (
+          <ProjectCard key={project._id} project={project} />
+        ))}
+      </div>
     </section>
   );
 });

@@ -201,7 +201,7 @@
 
   .glow-link {
     position: relative;
-    text-shadow: 0 0 10px rgba(136, 255, 0, 0.5);
+    text-shadow: 0 0 10px currentColor;
   }
 
   .glow-link:after {
@@ -217,5 +217,9 @@
 
   .glow-link:hover:after {
     width: 100%;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
   }
 }
