@@ -91,7 +91,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
           duration: 1,
           ease: 'easeOut',
         }}>
-        # I break systems so others can&apos;t.
+        # Offensive security tactics for real-world threats.
       </motion.h2>
       
     </section>

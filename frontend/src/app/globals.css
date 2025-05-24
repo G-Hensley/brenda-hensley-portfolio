@@ -153,4 +153,37 @@
   .glow-green:hover {
     box-shadow: 0 0 20px 0 rgba(0, 255, 0, 0.5);
   }
+
+  .bg-dot-fade {
+    background-image: 
+    radial-gradient(rgba(2, 151, 2, 0.788) 10%, transparent 10%),
+    radial-gradient(rgba(255, 15, 27, 0.274) 10%, transparent 10%);
+    background-position: 0px 0px, 8px 8px;
+    background-size: 16px 16px;
+    mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 100%);
+    opacity: 0.3;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    scrollbar-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+    scrollbar-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }
