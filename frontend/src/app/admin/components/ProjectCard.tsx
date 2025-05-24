@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {
   Dialog,
@@ -28,18 +27,25 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getProjects, addProject, editProject, deleteProject } from '@/lib/api';
+import {
+  getProjects,
+  addProjectWithImage,
+  editProjectWithImage,
+  deleteProject,
+  uploadImageToS3,
+} from '@/lib/api';
 import { PulseLoader } from 'react-spinners';
 import { successToast, errorToast } from '@/lib/toast';
+import Image from 'next/image';
+import { Label } from '@/components/ui/label';
+import { InputFile } from '@/components/ui/input-file';
 
-// CertificationCardProps is the props for the CertificationCard component
+// ProjectCardProps is the props for the ProjectCard component
 interface ProjectCardProps {
   title: string;
 }
 
-export function ProjectCard({
-  title,
-}: ProjectCardProps) {
+export function ProjectCard({ title }: ProjectCardProps) {
   // State variables for the component
   const [addableProject, setAddableProject] = useState<Project>({
     title: '',
@@ -61,7 +67,6 @@ export function ProjectCard({
   const [isOpen, setIsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentProject, setCurrentProject] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [skillsInput, setSkillsInput] = useState<string>('');
 
@@ -73,7 +78,7 @@ export function ProjectCard({
   });
 
   const addProjectMutation = useMutation({
-    mutationFn: addProject,
+    mutationFn: addProjectWithImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -85,7 +90,7 @@ export function ProjectCard({
   });
 
   const editProjectMutation = useMutation({
-    mutationFn: editProject,
+    mutationFn: editProjectWithImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -107,43 +112,41 @@ export function ProjectCard({
       errorToast('project', 'deleted');
     },
   });
-  
+
+  // Handle adding a project
   const handleAddProject = async () => {
+    if (!addableProject.title.trim() || !file) {
+      setError('Title and image are required');
+      return;
+    }
+
     try {
-      if (!addableProject.title.trim() || !file) {
-        setError('Title and image are required');
-        return;
-      }
-  
-      // Upload file to S3
-      const form = new FormData();
-      form.append('file', file);
-      const uploadRes = await fetch(`${baseUrl}/s3/projectImages`, {
-        method: 'POST',
-        body: form,
-      });
-      const { key, url } = await uploadRes.json();
-  
+      await uploadImageToS3('projects', file);
+
       await addProjectMutation.mutateAsync({
-        ...addableProject,
-        fileKey: key,
-        fileUrl: url,
-        skills: skillsInput.split(',').map((s) => s.trim()).filter(Boolean),
+        title: addableProject.title,
+        description: addableProject.description,
+        link: addableProject.link,
+        skills: skillsInput
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        file: file,
       });
-  
+
       // Reset state
       setAddableProject({
         title: '',
         description: '',
+        link: '',
+        skills: [],
         fileKey: '',
         fileUrl: '',
-        skills: [],
-        link: '',
       });
       setSkillsInput('');
       setFile(null);
-      setIsOpen(false);
       setError(null);
+      setIsOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add project');
     }
@@ -151,34 +154,44 @@ export function ProjectCard({
 
   // Handle editing a project
   const handleEditProject = async (project: Project) => {
-    const id = project._id;
+    setEditableProject(project);
+    if (!project.title.trim()) {
+      setError('Title is required');
+      return;
+    }
+
     try {
-      if (editableProject.title.trim()) {
-        const project = {
-          _id: id,
-          title: editableProject.title,
-          fileUrl: editableProject.fileUrl,
-          fileKey: editableProject.fileKey,
-          skills: editableProject.skills,
-          description: editableProject.description,
-          link: editableProject.link,
-        };
-        await editProjectMutation.mutateAsync(project);
-        setEditableProject({
-          _id: '',
-          title: '',
-          fileUrl: '',
-          fileKey: '',
-          skills: [],
-          description: '',
-          link: '',
-        });
-        setIsEditOpen(false);
+      const updated = { ...editableProject };
+
+      // Optional file upload for edit
+      if (file) {
+        await uploadImageToS3('projects', file);
       }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to edit project'
+
+      await editProjectMutation.mutateAsync(
+        updated as Partial<Omit<Project, 'fileUrl' | 'fileKey'>> & {
+          _id: string;
+          file?: File | undefined;
+          fileKey?: string | undefined;
+          fileUrl?: string | undefined;
+        }
       );
+
+      // Reset
+      setEditableProject({
+        _id: '',
+        title: '',
+        description: '',
+        link: '',
+        skills: [],
+        fileKey: '',
+        fileUrl: '',
+      });
+      setFile(null);
+      setIsEditOpen(false);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to edit project');
     }
   };
 
@@ -187,9 +200,7 @@ export function ProjectCard({
     try {
       await deleteProjectMutation.mutateAsync(id);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to delete project'
-      );
+      setError(err instanceof Error ? err.message : 'Failed to delete project');
     }
   };
 
@@ -220,10 +231,12 @@ export function ProjectCard({
                     <TableCell>{item.title}</TableCell>
                     <TableCell>
                       {item.fileUrl && (
-                        <img
+                        <Image
                           src={item.fileUrl}
                           alt={item.title}
-                          className='w-24 h-auto rounded shadow'
+                          width={96}
+                          height={96}
+                          className='rounded shadow'
                         />
                       )}
                     </TableCell>
@@ -234,10 +247,7 @@ export function ProjectCard({
                       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                         <DialogTrigger asChild>
                           <Button
-                            onClick={() =>
-                              setCurrentProject("'" + item.title + "'")
-                            }
-                            className='bg-neutral-800 text-white hover:bg-neutral-900'>
+                            className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>
                             Edit
                           </Button>
                         </DialogTrigger>
@@ -245,67 +255,78 @@ export function ProjectCard({
                           <DialogHeader>
                             <DialogTitle>Edit Project</DialogTitle>
                             <DialogDescription>
-                              Edit the project: {currentProject}
+                              Edit the project: {item.title}
                             </DialogDescription>
                           </DialogHeader>
-                          <div className='gap-4 py-4'>
-                            <div className='flex flex-col gap-4'>
-                              <Input
-                                value={editableProject.title}
-                                onChange={(e) =>
-                                  setEditableProject({
-                                    ...editableProject,
-                                    title: e.target.value,
-                                  })
-                                }
-                                placeholder='Title'
-                              />
-                              <Input
-                                value={editableProject.description}
-                                onChange={(e) =>
-                                  setEditableProject({
-                                    ...editableProject,
-                                    description: e.target.value,
-                                  })
-                                }
-                                placeholder='Description'
-                              />
-                              <Input
-                                value={editableProject.link}
-                                onChange={(e) =>
-                                  setEditableProject({
-                                    ...editableProject,
-                                    link: e.target.value,
-                                  })
-                                }
-                                placeholder='Link'
-                              />
-                              <Input
-                                value={editableProject.skills.join(', ')}
-                                onChange={(e) =>
-                                  setEditableProject({
-                                    ...editableProject,
-                                    skills: e.target.value
-                                      .split(',')
-                                      .map((s) => s.trim()),
-                                  })
-                                }
-                                placeholder='Comma-separated skills'
-                              />
-                            </div>
+                          <div className='grid gap-2 py-4'>
+                            <Label htmlFor='title'>Title</Label>
+                            <Input
+                              id='title'
+                              placeholder={item.title}
+                              value={editableProject.title}
+                              onChange={(e) =>
+                                setEditableProject({
+                                  ...editableProject,
+                                  title: e.target.value,
+                                })
+                              }
+                            />
+                            <Label htmlFor='description'>Description</Label>
+                            <Input
+                              id='description'
+                              placeholder={item.description}
+                              value={editableProject.description}
+                              onChange={(e) =>
+                                setEditableProject({
+                                  ...editableProject,
+                                  description: e.target.value,
+                                })
+                              }
+                            />
+                            <Label htmlFor='link'>Link</Label>
+                            <Input
+                              id='link'
+                              placeholder={item.link}
+                              value={editableProject.link}
+                              onChange={(e) =>
+                                setEditableProject({
+                                  ...editableProject,
+                                  link: e.target.value,
+                                })
+                              }
+                            />
+                            <Label htmlFor='skills'>Skills (comma-separated)</Label>
+                            <Input
+                              id='skills'
+                              placeholder={item.skills.join(', ')}
+                              value={editableProject.skills.join(', ')}
+                              onChange={(e) =>
+                                setEditableProject({
+                                  ...editableProject,
+                                  skills: e.target.value.split(',').map((s) => s.trim()),
+                                })
+                              }
+                            />
+                            <Label htmlFor='file'>Image</Label>
+                            <InputFile
+                              id='file'
+                              accept='image/*'
+                              onChange={(file) => setFile(file)}
+                            />
+                            {error && <div className='text-red-500 text-sm'>{error}</div>}
                           </div>
                           <DialogFooter>
                             <Button
                               type='submit'
                               onClick={() => handleEditProject(item)}
-                              className='bg-blue-900 text-white hover:bg-blue-950'>
+                              className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
                               Save changes
                             </Button>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
                       <Button
-                        className='bg-red-900 text-white hover:bg-red-950'
+                        className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'
                         onClick={() => handleDeleteProject(item._id || '')}>
                         Delete
                       </Button>
@@ -315,12 +336,12 @@ export function ProjectCard({
               </TableBody>
             </Table>
           </CardContent>
-  
+
           <CardFooter className='flex justify-center'>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button className='bg-blue-900 text-white hover:bg-blue-950 mt-4'>
-                  Add
+                <Button className='bg-blue-900 text-white hover:bg-blue-950 mt-4 cursor-pointer'>
+                  Add Project
                 </Button>
               </DialogTrigger>
               <DialogContent className='sm:max-w-[425px] bg-neutral-900 text-white'>
@@ -330,8 +351,10 @@ export function ProjectCard({
                     Upload an image and provide project details.
                   </DialogDescription>
                 </DialogHeader>
-                <div className='grid gap-4 py-4'>
+                <div className='grid gap-2 py-4'>
+                  <Label htmlFor='title'>Title</Label>
                   <Input
+                    id='title'
                     placeholder='Title'
                     value={addableProject.title}
                     onChange={(e) =>
@@ -341,7 +364,9 @@ export function ProjectCard({
                       })
                     }
                   />
+                  <Label htmlFor='description'>Description</Label>
                   <Input
+                    id='description'
                     placeholder='Description'
                     value={addableProject.description}
                     onChange={(e) =>
@@ -351,7 +376,9 @@ export function ProjectCard({
                       })
                     }
                   />
+                  <Label htmlFor='link'>Link</Label>
                   <Input
+                    id='link'
                     placeholder='Link'
                     value={addableProject.link}
                     onChange={(e) =>
@@ -361,19 +388,18 @@ export function ProjectCard({
                       })
                     }
                   />
+                  <Label htmlFor='skills'>Skills (comma-separated)</Label>
                   <Input
+                    id='skills'
                     placeholder='Comma-separated skills'
                     value={skillsInput}
                     onChange={(e) => setSkillsInput(e.target.value)}
                   />
-                  <Input
-                    type='file'
+                  <Label htmlFor='file'>Image</Label>
+                  <InputFile
+                    id='file'
                     accept='image/*'
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) {
-                        setFile(e.target.files[0]);
-                      }
-                    }}
+                    onChange={(file) => setFile(file)}
                   />
                   {error && <div className='text-red-500 text-sm'>{error}</div>}
                 </div>
@@ -381,7 +407,7 @@ export function ProjectCard({
                   <Button
                     type='submit'
                     onClick={handleAddProject}
-                    className='bg-blue-900 text-white hover:bg-blue-950'>
+                    className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer'>
                     Save
                   </Button>
                 </DialogFooter>

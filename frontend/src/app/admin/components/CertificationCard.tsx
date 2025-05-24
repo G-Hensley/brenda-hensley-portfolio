@@ -137,7 +137,7 @@ function AddDialog({ isOpen, onOpenChange, onAdd }: AddDialogProps) {
           {error && <p className='text-red-500'>{error}</p>}
         </div>
         <DialogFooter>
-          <Button onClick={handleAdd}>Save</Button>
+          <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer' onClick={handleAdd}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -198,9 +198,9 @@ function EditDialog({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>Edit</Button>
+        <Button className='bg-neutral-800 text-white hover:bg-neutral-900 cursor-pointer'>Edit</Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-lg'>
+      <DialogContent className='sm:max-w-lg bg-neutral-900 text-white'>
         <DialogHeader>
           <DialogTitle>Edit Certification</DialogTitle>
           <DialogDescription>
@@ -234,7 +234,7 @@ function EditDialog({
           {error && <p className='text-red-500'>{error}</p>}
         </div>
         <DialogFooter>
-          <Button onClick={handleEdit}>Save Changes</Button>
+          <Button className='bg-blue-900 text-white hover:bg-blue-950 cursor-pointer' onClick={handleEdit}>Save Changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -281,7 +281,7 @@ function CertificationRow({
         />
         <Button
           onClick={() => onDelete(certification._id!)}
-          className='bg-red-600 hover:bg-red-700'>
+          className='bg-red-900 text-white hover:bg-red-950 cursor-pointer'>
           Delete
         </Button>
       </TableCell>

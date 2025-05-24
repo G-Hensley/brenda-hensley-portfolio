@@ -100,7 +100,7 @@ export const deleteProject = async (id: string): Promise<void> => {
 
 type UploadFolder = 'certs' | 'projects';
 
-async function uploadImageToS3(
+export async function uploadImageToS3(
   folder: UploadFolder,
   file: File
 ): Promise<{ key: string; url: string }> {
