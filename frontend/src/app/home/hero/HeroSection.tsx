@@ -38,7 +38,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
   return (
     <section
-      className='text-white p-8 gap-8 h-screen flex flex-col items-center justify-center z-10'
+      className='p-8 gap-8 h-screen flex flex-col items-center z-10 md:py-40'
       ref={ref}>
       <MatrixBackground />
       <CursorGlow color='red' />
@@ -52,7 +52,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
           duration: 1,
           ease: 'easeOut',
         }}>
-        <Image src={'/avatar.png'} alt="Brenda Hensley Avatar" width={140} height={140} className='rounded-full' />
+        <Image src={'/avatar.png'} alt="Brenda Hensley Avatar" width={200} height={200} className='rounded-full' />
       </motion.div>
 
       {showWhoami && (
@@ -69,7 +69,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
             cursor={false}
             repeat={0}
           />
-          <span className='text-red-500 animate-blink'>_</span>
+          <span className='text-red-950 animate-blink'>_</span>
         </div>
       )}
 
@@ -91,12 +91,12 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
             cursor={false}
             repeat={0}
           />
-          <span className='text-red-500 animate-blink'>_</span>
+          <span className='text-red-950 animate-blink'>_</span>
         </div>
       )}
 
       <motion.h2
-        className={`mt-4 text-lg md:text-4xl font-mono text-red-700 ${electrolize.className}`}
+        className={`mt-4 text-lg md:text-4xl font-mono text-red-600 ${electrolize.className}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{

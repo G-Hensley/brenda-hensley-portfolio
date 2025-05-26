@@ -196,7 +196,7 @@
   }
 
   .title-outline {
-    -webkit-text-stroke: 2px rgb(255, 0, 0);
+    -webkit-text-stroke: 2px #d4030d;
   }
 
   .glow-link {

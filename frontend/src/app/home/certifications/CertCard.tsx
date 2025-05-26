@@ -17,12 +17,12 @@ interface CertCardProps {
 }
 
 export default function CertCard({ cert, index }: CertCardProps) {
-  const glowColor = index % 2 === 0 ? 'glow-red' : 'glow-green';
+  const glowColor = 'glow-red';
 
   return (
     <motion.div
-      className={`bg-black/50 p-4 rounded-xl border border-neutral-800 ${glowColor} shadow-lg flex flex-col items-center text-white w-72
-      hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit hover:bg-red-900/30`}
+      className={`bg-black/20 p-4 rounded-xl border border-neutral-800 ${glowColor} shadow-lg flex flex-col items-center text-white w-84
+      hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit hover:bg-red-900/20`}
       initial={{ y: 50, scale: 0.60 }}
       whileInView={{ y: 0, scale: 1 }}
       transition={{ duration: 0.4,
@@ -38,12 +38,20 @@ export default function CertCard({ cert, index }: CertCardProps) {
         height={96}
         className="rounded object-contain"
       />
-      <div className={`text-green-500 text-md w-full p-3 rounded-md font-mono whitespace-pre-wrap ${shareTechMono.className}`}>
+      <div className={`text-green-500 text-md text-center rounded-md font-mono whitespace-pre-wrap ${shareTechMono.className}`}>
         {`> Issued: ${new Date(cert.dateAcquired).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
-        })}
-> Skills: ${cert.description.join(', ')}`}
+        })}` 
+        }
+      </div>
+      <div className={`text-green-500 text-lg w-full rounded-md font-mono whitespace-pre-wrap flex flex-col gap-2 items-center ${shareTechMono.className}`}>
+        <p>Skills</p>
+        <ul className='flex gap-2 items-center flex-wrap justify-center text-sm'>
+          {cert.description.map((skill, index) => (
+            <li className='bg-green-950/50 px-2 py-1 rounded-md' key={index}>{skill}</li>
+          ))}
+        </ul>
       </div>
     </motion.div>
   );
