@@ -22,15 +22,15 @@ export default function ProjectCard({ project }: { project: Project }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="bg-black/30 pb-4 rounded-xl border border-neutral-800 shadow-lg flex flex-col items-center text-green-600
-      hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit hover:bg-green-950/30 w-fit hover:shadow-sm hover:shadow-green-500/50
+    <div className="bg-black/10 pb-4 rounded-xl border border-neutral-800 shadow-lg flex flex-col items-center text-green-600
+      hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit w-84 hover:shadow-md hover:shadow-red-500/50
       relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         <Image src={project.fileUrl} alt={project.title} width={350} height={200} className="rounded-t-xl" />
         <h1 className={`text-2xl font-bold ${electrolize.className}`}>{project.title}</h1>
         <p className={`text-md ${shareTechMono.className}`}>{project.description}</p>
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-4 flex-wrap px-4 justify-center">
           {project.skills.map((skill) => (
-            <p key={skill} className={`text-md ${shareTechMono.className} border border-neutral-800 bg-neutral-900/60 rounded-xl px-4 
+            <p key={Date.now() + Math.random()} className={`text-md ${shareTechMono.className} border border-neutral-800 bg-neutral-900/60 rounded-xl px-4 
             py-1 uppercase text-red-500 text-glow`}
           >
             {skill}
@@ -40,7 +40,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         {isHovered && (
           <div className="absolute w-full h-full flex items-center justify-center bg-black/90 rounded-xl">
             <Link href={project.link} target="_blank" className={`text-md text-green-600 z-30 bg-green-950/90 rounded-xl px-4 py-2
-            hover:text-green-400 hover:scale-110 transition-all duration-300 hover:shadow-sm hover:text-glow
+            hover:text-green-400 hover:scale-110 transition-all duration-300 hover:shadow-sm hover:text-glow hover:outline-green-500/50 hover:outline-1
             active:scale-100 ${electrolize.className} flex flex-row gap-2 items-center`}>View Project <FiExternalLink className="inline-block" /></Link>
           </div>
         )}

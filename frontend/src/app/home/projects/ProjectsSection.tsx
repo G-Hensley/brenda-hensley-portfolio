@@ -1,12 +1,12 @@
 'use client';
 
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Electrolize } from 'next/font/google';
 import { TypeAnimation } from 'react-type-animation';
 import ProjectCard from '../components/ProjectCard';
 import { getProjects } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const electrolize = Electrolize({
@@ -16,6 +16,17 @@ const electrolize = Electrolize({
 });
 
 export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
+
+  const typingRef = useRef(null);
+  const isInView = useInView(typingRef, { once: true });
+
+  const [startTyping, setStartTyping] = useState(false);
+
+  useEffect(() => {
+    if (isInView) {
+      setStartTyping(true);
+    }
+  }, [isInView]);
 
   const { data: projects } = useQuery({
     queryKey: ['projects'],
@@ -40,26 +51,28 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
           <SelectTrigger className='bg-green-950/20 text-white cursor-pointer border-green-950'>
             <SelectValue placeholder='Filter by skill' />
           </SelectTrigger>
-          <SelectContent className='bg-green-950/20 text-white cursor-pointer border-green-950'>
+          <SelectContent className='bg-green-950/90 text-white cursor-pointer border-green-950'>
             <SelectItem value='all'>All Skills</SelectItem>
             {filterOptions.map((option) => (
               <SelectItem key={option} value={option}>
-                {option}
+                {option != 'all' ? option.charAt(0).toUpperCase() + option.slice(1) : ``}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
       
-      <div className="flex flex-col gap-4 items-center">
-        <TypeAnimation
-          sequence={['> My Projects', 1000]}
-          speed={50}
-          className={`text-red-500 ${electrolize.className} text-3xl md:text-6xl`}
-        />
+      <div ref={typingRef} className="flex flex-col gap-4 items-center">
+        {startTyping && (
+          <TypeAnimation
+            sequence={['> My Projects', 1000]}
+            speed={50}
+            className={`text-red-500 ${electrolize.className} text-3xl md:text-6xl`}
+          />
+        )}
       </div>
       <div className="flex flex-wrap gap-8 justify-center">
-        {projects?.filter(project => selectedSkill ? project.skills.includes(selectedSkill) : true).map((project, index) => (
+        {projects?.filter(project => selectedSkill ? project.skills.includes(selectedSkill) || selectedSkill === 'all' : true).map((project, index) => (
           <motion.div
             key={project._id}
             initial={{ opacity: 0, scale: 0.5, y: 50 }}
