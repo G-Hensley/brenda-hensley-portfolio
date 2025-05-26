@@ -12,6 +12,8 @@ import { getCertifications } from '@/lib/api';
 import { TypeAnimation } from 'react-type-animation';
 import CertCard from './CertCard';
 import { SkillsScroll } from '../components/SkillScroll';
+import { useInView } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
 
 const electrolize = Electrolize({
   weight: ['400'],
@@ -20,6 +22,18 @@ const electrolize = Electrolize({
 });
 
 export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
+
+  const typingRef = useRef(null);
+  const isInView = useInView(typingRef, { once: true });
+
+  const [startTyping, setStartTyping] = useState(false);
+
+  // Effect to start the typing animation when the section is in view
+  useEffect(() => {
+    if (isInView) {
+      setStartTyping(true);
+    }
+  }, [isInView]);
 
   // Fetch the certification data from the API
   const { data: certs = [] } = useQuery<Certification[]>({
@@ -33,14 +47,18 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
       data-section='green'>
         <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" />
           <CursorGlow color='green' />
-          <div className={`text-left text-3xl md:text-6xl text-green-600 ${electrolize.className} z-10`}>
-            <TypeAnimation
-              sequence={['# Certifications', 1000]}
-              speed={50}
-              cursor={false}
-              repeat={0}
-            />
-            <span className='text-green-500 animate-blink'>_</span>
+          <div ref={typingRef} className={`text-left text-3xl md:text-6xl text-green-600 ${electrolize.className} z-10`}>
+            {startTyping && (
+              <>
+                <TypeAnimation
+                  sequence={['# Certifications', 1000]}
+                  speed={50}
+                  cursor={false}
+                  repeat={0}
+                />
+                <span className='text-green-500 animate-blink'>_</span>
+              </>
+            )}
           </div>
 
           <div className="flex flex-wrap justify-center w-full gap-8 z-10">
