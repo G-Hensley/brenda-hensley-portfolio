@@ -44,7 +44,7 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
 
 
   return (
-    <section className="flex flex-col gap-12 pt-4 pb-12 px-8 md:px-16 min-h-fit items-center relative" ref={ref}>
+    <section id='projects' className="flex flex-col gap-12 pt-4 pb-12 px-8 md:px-16 min-h-fit items-center relative" ref={ref}>
 
       <div className="absolute top-8 right-48">
         <Select onValueChange={(value) => setSelectedSkill(value)}>

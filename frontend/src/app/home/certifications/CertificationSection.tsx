@@ -42,7 +42,7 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
   });
 
   return (
-    <section className='text-white px-8 py-16 gap-12 h-fit flex flex-col items-center relative'
+    <section id='certs' className='text-white px-8 py-16 gap-12 h-fit flex flex-col items-center relative'
       ref={ref}
       data-section='green'>
         <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" />
