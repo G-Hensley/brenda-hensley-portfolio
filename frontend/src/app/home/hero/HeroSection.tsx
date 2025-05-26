@@ -79,11 +79,11 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
           <TypeAnimation
             sequence={[
               1000,
-              'root@brenda-hensley:~$ Pentester',
-              2000,
-              'root@brenda-hensley:~$ App Security Engineer',
-              4000,
-              'root@brenda-hensley:~$ Red Team Operator',
+              'root@brenda-hensley:~$ OffSec Practitioner',
+              3500,
+              'root@brenda-hensley:~$ AppSec Engineer',
+              3000,
+              'root@brenda-hensley:~$ Bridging Offense & AppSec',
               2500,
             ]}
             wrapper='span'
@@ -96,7 +96,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
       )}
 
       <motion.h2
-        className={`mt-4 text-lg md:text-4xl font-mono text-green-600 ${electrolize.className}`}
+        className={`mt-4 text-lg md:text-4xl font-mono text-red-700 ${electrolize.className}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -104,9 +104,8 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
           duration: 1,
           ease: 'easeOut',
         }}>
-        # Offensive security tactics for real-world threats.
+        # Simulating threats. Strengthening defenses.
       </motion.h2>
-      
     </section>
   );
 });

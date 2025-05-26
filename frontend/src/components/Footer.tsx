@@ -2,6 +2,10 @@ import Link from "next/link";
 import { Electrolize } from "next/font/google";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Form, FormItem, FormLabel, FormControl, FormField, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm, FieldValues } from "react-hook-form";
 const electrolize = Electrolize({
   weight: ['400'],
   subsets: ['latin'],
@@ -10,8 +14,39 @@ const electrolize = Electrolize({
 
 export default function Footer() {
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const form = useForm<FieldValues>({
+    defaultValues: {
+      name: '',
+      email: '',
+      message: '',
+    },
+  });
+
   return (
     <footer className="bg-green-950/20 text-white py-4 px-8 md:px-16 border-t border-green-950 flex flex-col items-center gap-8 relative">
+
+      {isOpen && 
+        <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none">
+          <Form {...form}>
+          <FormItem>
+            <FormLabel>Name</FormLabel>
+            <FormControl>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <Input type="text" placeholder="Name" {...field} />
+                )}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </Form>
+        </div>
+      }
+
       <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" />
 
       <div className="flex gap-36">
@@ -31,7 +66,8 @@ export default function Footer() {
         <div className="flex-col flex items-center gap-4">
           <Button variant="outline" className="text-white drop-shadow-sm drop-shadow-green-500/20 cursor-pointer
           bg-green-950/20 border-green-950 hover:scale-105 transition-all duration-300 active:scale-100 hover:bg-green-950/30
-          hover:text-white">
+          hover:text-white"
+          onClick={() => setIsOpen(!isOpen)}>
             Contact Me<FiMail className="scale-140"/>
           </Button>
         </div>
