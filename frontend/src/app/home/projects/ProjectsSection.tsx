@@ -65,7 +65,7 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
       <div ref={typingRef} className="flex flex-col gap-4 items-center">
         {startTyping && (
           <TypeAnimation
-            sequence={['> My Projects', 1000]}
+            sequence={[800, '> My Projects', 1000]}
             speed={50}
             className={`text-red-500 ${electrolize.className} text-3xl md:text-6xl`}
           />

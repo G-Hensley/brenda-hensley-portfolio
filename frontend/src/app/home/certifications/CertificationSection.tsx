@@ -51,7 +51,7 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
             {startTyping && (
               <>
                 <TypeAnimation
-                  sequence={['# Certifications', 1000]}
+                  sequence={[800, '# Certifications', 1000]}
                   speed={50}
                   cursor={false}
                   repeat={0}
