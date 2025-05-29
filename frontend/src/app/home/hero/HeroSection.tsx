@@ -8,7 +8,6 @@ import { CursorGlow } from '@/components/CursorGlow';
 import { TypeAnimation } from 'react-type-animation';
 import { Share_Tech_Mono, Electrolize } from 'next/font/google';
 import { motion } from 'framer-motion';
-import MatrixBackground from '@/components/MatrixBg';
 import Image from 'next/image';
 
 const shareTechMono = Share_Tech_Mono({
@@ -38,9 +37,9 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
   return (
     <section
-      className='p-8 gap-8 h-screen flex flex-col items-center z-10 md:py-40'
+      className='p-8 gap-8 h-screen flex flex-col items-center z-10 md:py-40 relative'
+      id='home'
       ref={ref}>
-      <MatrixBackground />
       <CursorGlow color='red' />
 
       <motion.div
@@ -52,7 +51,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
           duration: 1,
           ease: 'easeOut',
         }}>
-        <Image src={'/avatar.png'} alt="Brenda Hensley Avatar" width={200} height={200} className='rounded-full' />
+        <Image src={'/avatar.png'} alt="Brenda Hensley Avatar" width={200} height={200} className='rounded-full opacity-70 flicker' />
       </motion.div>
 
       {showWhoami && (
@@ -106,6 +105,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
         }}>
         # Simulating threats. Strengthening defenses.
       </motion.h2>
+
     </section>
   );
 });
