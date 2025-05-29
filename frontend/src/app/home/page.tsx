@@ -9,7 +9,8 @@ import { useEffect, useState, useRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
 import { ProjectsSection } from '@/app/home/projects/ProjectsSection';
 import Footer from '@/components/Footer';
-
+import AboutSection from '@/app/home/about/AboutSection';
+import MatrixBackground from '@/components/MatrixBg';
 export default function Home() {
   // cursor glow color
   const [cursorColor, setCursorColor] = useState('red');
@@ -50,8 +51,10 @@ export default function Home() {
 
   return (
     <main className='min-h-fit bg-zinc-950 z-0'>
+      <MatrixBackground />
       <CursorGlow color={cursorColor} />
       <HeroSection ref={redRef} />
+      <AboutSection />
       <CertificationSection ref={greenRef} />
       <ProjectsSection ref={redRef} />
       <Footer />

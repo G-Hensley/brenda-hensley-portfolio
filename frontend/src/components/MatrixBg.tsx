@@ -73,5 +73,5 @@ export default function MatrixBackground() {
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="absolute inset-0 z-0 opacity-15" style={{ filter: "blur(1px)" }} />
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 opacity-15" style={{ filter: "blur(1px)" }} />
 }

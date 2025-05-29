@@ -21,7 +21,7 @@ export default function CertCard({ cert, index }: CertCardProps) {
 
   return (
     <motion.div
-      className={`bg-black/20 p-4 rounded-xl border border-neutral-800 ${glowColor} shadow-lg flex flex-col items-center text-white w-84
+      className={`bg-zinc-900/20 p-4 rounded-xl border border-zinc-800 ${glowColor} shadow-lg flex flex-col items-center text-white w-84
       hover:scale-105 transition-all duration-300 justify-between gap-4 h-fit hover:bg-red-900/20`}
       initial={{ y: 50, scale: 0.60 }}
       whileInView={{ y: 0, scale: 1 }}

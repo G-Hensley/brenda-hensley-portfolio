@@ -45,7 +45,7 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
     <section id='certs' className='text-white px-8 py-16 gap-12 h-fit flex flex-col items-center relative'
       ref={ref}
       data-section='green'>
-        <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" />
+        {/* <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" /> */}
           <CursorGlow color='green' />
           <div ref={typingRef} className={`text-left text-3xl md:text-6xl text-green-600 ${electrolize.className} z-10`}>
             {startTyping && (
