@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { Share_Tech_Mono } from 'next/font/google';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import HamburgerIcon from './HamburgerIcon';
 
+// Fonts
 const shareTechMono = Share_Tech_Mono({
   weight: ['400'],
   subsets: ['latin'],
@@ -10,10 +12,15 @@ const shareTechMono = Share_Tech_Mono({
 });
 
 export default function Navbar() {
+  // State for the active link
   const [isActive, setIsActive] = useState('home');
+  // State for the hamburger menu
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleClick = (link: string) => {
     setIsActive(link);
+    // Close the menu when a link is clicked
+    setMenuOpen(false);
   };
 
   // Use useEffect to handle the active link when the user scrolls
@@ -80,49 +87,75 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', scrollListener);
   }, []);
 
+  // Links for the menu
+  const navLinks = [
+    { name: 'Home', href: '#home', key: 'home' },
+    { name: 'Certs', href: '#certs', key: 'certs' },
+    { name: 'Projects', href: '#projects', key: 'projects' },
+    { name: 'About', href: '#about', key: 'about' },
+    { name: 'Blog', href: '#blog', key: 'blog' },
+  ]
+
   return (
-    <nav className='text-green-400 fixed top-0 z-60 w-full flex justify-center text-lg '>
+    <nav className="text-green-400 fixed top-0 z-60 w-full flex justify-center text-lg">
+      <motion.div
+  className="w-full lg:w-auto"
+  initial={{ opacity: 0, y: -100 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1, ease: 'easeInOut', delay: 0.5 }}
+>
+  {/* 🟢 Hamburger Icon – mobile only */}
+  <div className="lg:hidden pr-8 absolute right-0">
+    <button onClick={() => setMenuOpen(!menuOpen)}>
+      <HamburgerIcon isOpen={menuOpen} />
+    </button>
+  </div>
+
+  {/* 🟢 Desktop Nav – always visible on lg+ */}
+  <div
+    className={`${shareTechMono.className} hidden lg:flex flex-col lg:flex-row items-center gap-8 lg:gap-16 px-8 py-4 border-2 border-red-900 border-t-0 bg-zinc-950/40 backdrop-blur-sm glow-red rounded-b-lg mt-16 lg:mt-0`}
+  >
+    {navLinks.map(({ name, href, key }) => (
+      <Link
+        key={key}
+        href={href}
+        onClick={() => handleClick(key)}
+        className={`${
+          isActive === key ? 'text-red-800' : 'hover:text-green-600'
+        } transition-all duration-300 glow-link`}
+      >
+        {name}
+      </Link>
+    ))}
+  </div>
+
+  {/* 🟡 Mobile Nav – conditional rendering */}
+  <AnimatePresence>
+    {menuOpen && (
       <motion.div
         initial={{ opacity: 0, y: -100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeInOut', delay: 5 }}>
-        <div
-          className={`${shareTechMono.className} bg-zinc-950/40 backdrop-blur-sm px-8 py-4 border-2 flex gap-16 border-red-900 border-t-0 glow-red
-          rounded-b-lg items-center`}>
+        animate={{ opacity: 1, y:0 }}
+        exit={{ opacity: 0, y: -100 }}
+        transition={{ duration: 0.4, ease: 'easeInOut' }}
+        className={`${shareTechMono.className} lg:hidden flex flex-col items-center gap-8 px-8 pt-16 pb-8 border-2 border-red-900 bg-zinc-950/40 backdrop-blur-sm rounded-b-lg glow-red`}
+      >
+        {navLinks.map(({ name, href, key }) => (
           <Link
-            onClick={() => handleClick('home')}
+            key={key}
+            href={href}
+            onClick={() => handleClick(key)}
             className={`${
-              isActive === 'home' ? 'text-red-800' : 'hover:text-green-600'
+              isActive === key ? 'text-red-800' : 'hover:text-green-600'
             } transition-all duration-300 glow-link`}
-            href='#home'>
-            Home
+          >
+            {name}
           </Link>
-          <Link
-            onClick={() => handleClick('certs')}
-            className={`${
-              isActive === 'certs' ? 'text-red-800' : 'hover:text-green-600'
-            } transition-all duration-300 glow-link`}
-            href='#certs'>
-            Certifications
-          </Link>
-          <Link
-            onClick={() => handleClick('projects')}
-            className={`${
-              isActive === 'projects' ? 'text-red-800' : 'hover:text-green-600'
-            } transition-all duration-300 glow-link`}
-            href='#projects'>
-            Projects
-          </Link>
-          <Link
-            onClick={() => handleClick('about')}
-            className={`${
-              isActive === 'about' ? 'text-red-800' : 'hover:text-green-600'
-            } transition-all duration-300 glow-link`}
-            href='#about'>
-            About
-          </Link>
-        </div>
+        ))}
       </motion.div>
+    )}
+  </AnimatePresence>
+</motion.div>
     </nav>
   );
+  
 }

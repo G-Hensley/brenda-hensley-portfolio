@@ -37,7 +37,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
   return (
     <section
-      className='p-8 gap-8 h-screen flex flex-col items-center z-10 md:py-40 relative'
+      className='px-8 py-32 gap-8 h-screen flex flex-col items-center z-10 md:py-40 relative'
       id='home'
       ref={ref}>
       <CursorGlow color='red' />
@@ -56,7 +56,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       {showWhoami && (
         <div
-          className={`text-left text-3xl md:text-6xl title-outline text-transparent font-mono ${shareTechMono.className}`}>
+          className={`text-3xl md:text-6xl title-outline text-transparent font-mono text-center ${shareTechMono.className}`}>
           <TypeAnimation
             sequence={[
               '> whoami',
@@ -74,7 +74,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       {!showWhoami && (
         <div
-          className={`text-left text-3xl title-outline text-transparent md:text-6xl font-mono ${shareTechMono.className}`}>
+          className={`text-center text-3xl md:text-4xl lg:text-5xl title-outline text-transparent xl:text-6xl font-mono ${shareTechMono.className}`}>
           <TypeAnimation
             sequence={[
               1000,
@@ -95,7 +95,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
       )}
 
       <motion.h2
-        className={`mt-4 text-lg md:text-4xl font-mono text-red-600 ${electrolize.className}`}
+        className={`mt-4 text-lg md:text-2xl lg:text-3xl xl:text-4xl font-mono text-red-600 ${electrolize.className}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
