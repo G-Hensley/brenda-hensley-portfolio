@@ -7,7 +7,7 @@ import { CursorGlow } from '@/components/CursorGlow';
 import { ProjectsSection } from '@/app/certifications/projects/ProjectsSection';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
-
+import WebGLBackground from '@/components/WebGlBackground';
 export default function SkillsPage() {
 
   const [cursorColor, setCursorColor] = useState('red');
@@ -48,6 +48,7 @@ export default function SkillsPage() {
   return (
     <main className='min-h-fit bg-zinc-950 z-0'>
       <CursorGlow color={cursorColor} />
+      <WebGLBackground />
       <Navbar />
       <CertificationSection ref={redRef} />
       <ProjectsSection ref={greenRef} />
