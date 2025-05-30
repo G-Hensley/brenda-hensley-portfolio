@@ -14,6 +14,7 @@ import CertCard from './CertCard';
 import { SkillsScroll } from '../../home/components/SkillScroll';
 import { useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
+import { ScrollText } from 'lucide-react';
 
 const electrolize = Electrolize({
   weight: ['400'],
@@ -50,11 +51,12 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
       <CursorGlow color='green' />
       <div
         ref={typingRef}
-        className={`text-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
+        className={`text-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10 flex items-center`}>
+        <ScrollText className='text-green-600 icon-glow mr-4' size={56} />
         {startTyping && (
           <>
             <TypeAnimation
-              sequence={[800, '# Certifications', 1000]}
+              sequence={[800, 'Certifications', 1000]}
               speed={50}
               cursor={false}
               repeat={0}

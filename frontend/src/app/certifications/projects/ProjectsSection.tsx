@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { FolderClosed } from 'lucide-react';
 
 const electrolize = Electrolize({
   weight: ['400'],
@@ -74,11 +75,12 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       <div
         ref={typingRef}
-        className={`text-center text-3xl md:text-6xl text-red-600 text-glow ${electrolize.className} z-10`}>
+        className={`text-center text-3xl md:text-6xl text-red-600 text-glow ${electrolize.className} z-10 flex items-center`}>
+        <FolderClosed className='text-red-600 icon-glow mr-4' size={56} />
         {startTyping && (
           <>
             <TypeAnimation
-              sequence={[800, '> My Projects', 1000]}
+              sequence={[800, 'My Projects', 1000]}
               speed={50}
               cursor={false}
               repeat={0}

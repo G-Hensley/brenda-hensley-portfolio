@@ -1,7 +1,7 @@
 import { TypeAnimation } from "react-type-animation";
 import AnimatedAboutMe from "./AnimatedAboutMe";
 import WebGLBackground from "@/components/WebGlBackground";
-import { useRef, useState, useEffect, Ref, forwardRef } from "react";
+import { useRef, useState, useEffect, forwardRef } from "react";
 import { Electrolize } from "next/font/google";
 import { useInView } from "framer-motion";
 import { User } from "lucide-react";
