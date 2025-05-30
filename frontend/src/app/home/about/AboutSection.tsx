@@ -1,7 +1,7 @@
 import { TypeAnimation } from "react-type-animation";
 import AnimatedAboutMe from "./AnimatedAboutMe";
 import WebGLBackground from "@/components/WebGlBackground";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Ref, forwardRef } from "react";
 import { Electrolize } from "next/font/google";
 import { useInView } from "framer-motion";
 import { User } from "lucide-react";
@@ -12,7 +12,7 @@ const electrolize = Electrolize({
   variable: '--font-electrolize',
 });
 
-export default function AboutSection() {
+export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
 
   const typingRef = useRef<HTMLDivElement>(null);
   const [startTyping, setStartTyping] = useState(false);
@@ -26,7 +26,7 @@ export default function AboutSection() {
   }, [isInView]);
 
   return (
-    <section id="about" className="relative px-6 pt-20 pb-16 bg-transparent flex flex-col gap-12 items-center">
+    <section ref={ref} id="about" className="relative px-6 pt-20 pb-16 bg-transparent flex flex-col gap-12 items-center">
         <div ref={typingRef} className={`text-center flex items-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
           <User className="text-green-600 icon-glow mr-4" size={56} />
             {startTyping && (
@@ -45,4 +45,6 @@ export default function AboutSection() {
         <WebGLBackground />
     </section>
   );
-}
+});
+
+AboutSection.displayName = 'AboutSection';

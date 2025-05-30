@@ -30,13 +30,13 @@ export function CursorGlow({ color }: CursorGlowProps) {
 
   return (
     <motion.div
-      className='fixed -top-20 -left-20 pointer-events-none z-20'
+      className='fixed -top-10 -left-10 pointer-events-none z-20'
       style={{
         x: smoothX,
         y: smoothY,
       }}>
       <div
-        className={`w-28 h-28 rounded-full opacity-20 blur-3xl mix-blend-screen`}
+        className={`w-20 h-20 rounded-full opacity-20 blur-3xl mix-blend-screen`}
         style={{
           backgroundColor: color,
         }}
