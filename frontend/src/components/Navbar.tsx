@@ -89,11 +89,11 @@ export default function Navbar() {
 
   // Links for the menu
   const navLinks = [
-    { name: 'Home', href: '#home', key: 'home' },
-    { name: 'Certs', href: '#certs', key: 'certs' },
-    { name: 'Projects', href: '#projects', key: 'projects' },
-    { name: 'About', href: '#about', key: 'about' },
-    { name: 'Blog', href: '#blog', key: 'blog' },
+    { name: 'Home', href: '/', key: 'home' },
+    { name: 'Certs', href: '/skills', key: 'certs' },
+    { name: 'Projects', href: '/skills#projects', key: 'projects' },
+    { name: 'About', href: '/#about', key: 'about' },
+    { name: 'Blog', href: '/blog', key: 'blog' },
   ]
 
   return (

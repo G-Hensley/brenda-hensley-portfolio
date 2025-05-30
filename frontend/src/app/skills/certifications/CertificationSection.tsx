@@ -11,7 +11,7 @@ import { Certification } from '@/types/types';
 import { getCertifications } from '@/lib/api';
 import { TypeAnimation } from 'react-type-animation';
 import CertCard from './CertCard';
-import { SkillsScroll } from '../components/SkillScroll';
+import { SkillsScroll } from '../../home/components/SkillScroll';
 import { useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 
@@ -22,7 +22,6 @@ const electrolize = Electrolize({
 });
 
 export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
-
   const typingRef = useRef(null);
   const isInView = useInView(typingRef, { once: true });
 
@@ -42,33 +41,36 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
   });
 
   return (
-    <section id='certs' className='text-white px-8 py-16 gap-12 h-fit flex flex-col items-center relative'
+    <section
+      id='certs'
+      className='text-white px-8 pt-20 pb-16 gap-12 h-fit flex flex-col items-center relative'
       ref={ref}
       data-section='green'>
-        {/* <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" /> */}
-          <CursorGlow color='green' />
-          <div ref={typingRef} className={`text-left text-3xl md:text-6xl text-green-600 ${electrolize.className} z-10`}>
-            {startTyping && (
-              <>
-                <TypeAnimation
-                  sequence={[800, '# Certifications', 1000]}
-                  speed={50}
-                  cursor={false}
-                  repeat={0}
-                />
-                <span className='text-green-500 animate-blink'>_</span>
-              </>
-            )}
-          </div>
+      {/* <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" /> */}
+      <CursorGlow color='green' />
+      <div
+        ref={typingRef}
+        className={`text-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
+        {startTyping && (
+          <>
+            <TypeAnimation
+              sequence={[800, '# Certifications', 1000]}
+              speed={50}
+              cursor={false}
+              repeat={0}
+            />
+            <span className='text-green-500 animate-blink text-glow'>_</span>
+          </>
+        )}
+      </div>
 
-          <div className="flex flex-wrap justify-center w-full gap-8 z-10">
-            {certs.map((cert, index) => (
-              <CertCard key={cert._id} cert={cert} index={index} />
-            ))}
-          </div>
+      <div className='flex flex-wrap justify-center w-full gap-8 z-10'>
+        {certs.map((cert, index) => (
+          <CertCard key={cert._id} cert={cert} index={index} />
+        ))}
+      </div>
 
-          <SkillsScroll />
-
+      <SkillsScroll />
     </section>
   );
 });

@@ -25,8 +25,8 @@ export default function AboutSection() {
   }, [isInView]);
 
   return (
-    <section id="about" className="relative px-6 bg-transparent flex flex-col gap-12">
-        <div ref={typingRef} className={`text-left text-3xl md:text-6xl text-green-600 ${electrolize.className} z-10`}>
+    <section id="about" className="relative px-6 pt-20 pb-16 bg-transparent flex flex-col gap-12 items-center">
+        <div ref={typingRef} className={`text-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
             {startTyping && (
               <>
                 <TypeAnimation
