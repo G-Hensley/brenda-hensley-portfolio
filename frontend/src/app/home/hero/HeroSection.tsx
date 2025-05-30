@@ -3,11 +3,11 @@
 'use client';
 
 // Import the components
-import { useState, useEffect, forwardRef } from 'react';
+import { useState, useEffect, forwardRef, useRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
 import { TypeAnimation } from 'react-type-animation';
 import { Share_Tech_Mono, Electrolize } from 'next/font/google';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 
 const shareTechMono = Share_Tech_Mono({
@@ -25,6 +25,15 @@ const electrolize = Electrolize({
 export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
   // State to show the "whoami"
   const [showWhoami, setShowWhoami] = useState(true);
+  const sectionRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, -300]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   // Effect to hide the "whoami"
   useEffect(() => {
@@ -37,9 +46,19 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
   return (
     <section
-      className='px-8 py-32 gap-8 h-screen flex flex-col items-center z-10 md:py-40 relative'
-      id='home'
       ref={ref}>
+      <motion.section
+        className='px-8 py-32 gap-8 h-screen flex flex-col items-center z-10 md:py-40 relative'
+        id='home'
+        ref={sectionRef}
+        style={{ y, opacity }}
+        whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 0 }}
+      transition={{
+        duration: 1,
+        ease: 'easeOut',
+      }}
+      >
       <CursorGlow color='red' />
 
       <motion.div
@@ -106,6 +125,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
         # Simulating threats. Strengthening defenses.
       </motion.h2>
 
+    </motion.section>
     </section>
   );
 });

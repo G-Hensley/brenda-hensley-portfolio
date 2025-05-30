@@ -4,7 +4,7 @@
 import { CertificationSection } from './certifications/CertificationSection';
 // import { useEffect, useState, useRef } from 'react';
 // import { CursorGlow } from '@/components/CursorGlow';
-import { ProjectsSection } from '@/app/skills/projects/ProjectsSection';
+import { ProjectsSection } from '@/app/certifications/projects/ProjectsSection';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 

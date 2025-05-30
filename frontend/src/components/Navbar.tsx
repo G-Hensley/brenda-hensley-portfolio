@@ -90,8 +90,8 @@ export default function Navbar() {
   // Links for the menu
   const navLinks = [
     { name: 'Home', href: '/', key: 'home' },
-    { name: 'Certs', href: '/skills', key: 'certs' },
-    { name: 'Projects', href: '/skills#projects', key: 'projects' },
+    { name: 'Certs', href: '/certifications', key: 'certs' },
+    { name: 'Projects', href: '/certifications#projects', key: 'projects' },
     { name: 'About', href: '/#about', key: 'about' },
     { name: 'Blog', href: '/blog', key: 'blog' },
   ]
