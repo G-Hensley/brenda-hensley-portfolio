@@ -3,7 +3,7 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Electrolize } from 'next/font/google';
 import { TypeAnimation } from 'react-type-animation';
-import ProjectCard from '../../home/components/ProjectCard';
+import ProjectCard from '../../../components/ProjectCard';
 import { getProjects } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'framer-motion';
@@ -51,11 +51,11 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <section
       id='projects'
-      className='flex flex-col gap-12 pt-20 pb-12 px-8 md:px-16 min-h-fit items-center relative'
+      className='flex flex-col gap-20 pt-20 pb-12 px-8 md:px-16 min-h-fit items-center relative'
       ref={ref}>
       <div className='absolute top-20 right-64'>
         <Select onValueChange={(value) => setSelectedSkill(value)}>
-          <SelectTrigger className='bg-green-950/20 text-white cursor-pointer border-green-900 text-lg'>
+          <SelectTrigger className='bg-green-950/20 glow-green text-white cursor-pointer border-green-950 text-lg'>
             <SelectValue placeholder='Filter by skill' />
           </SelectTrigger>
           <SelectContent className='bg-green-950/90 text-white cursor-pointer border-green-900'>
@@ -89,7 +89,7 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
           </>
         )}
       </div>
-      <div className='flex flex-wrap gap-8 justify-center'>
+      <div className='flex flex-wrap gap-8 justify-center w-full'>
         {projects
           ?.filter((project) =>
             selectedSkill
@@ -100,6 +100,7 @@ export const ProjectsSection = forwardRef<HTMLDivElement>((props, ref) => {
           .map((project, index) => (
             <motion.div
               key={project._id}
+              className='flex basis-full sm:basis-[calc(50%-1rem)] lg:basis-[calc(20%-1.6rem)] max-w-sm'
               initial={{ opacity: 0, scale: 0.5, y: 50 }}
               whileInView={{
                 opacity: 1,

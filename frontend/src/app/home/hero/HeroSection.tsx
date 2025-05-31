@@ -32,7 +32,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
     offset: ['start start', 'end start'],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -300]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   // Effect to hide the "whoami"

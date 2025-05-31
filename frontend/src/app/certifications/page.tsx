@@ -5,12 +5,15 @@ import { CertificationSection } from './certifications/CertificationSection';
 import { useEffect, useState, useRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
 import { ProjectsSection } from '@/app/certifications/projects/ProjectsSection';
-import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import WebGLBackground from '@/components/WebGlBackground';
+import Footer from '@/components/Footer';
+import ContactModal from '@/components/ContactModal';
+
 export default function SkillsPage() {
 
   const [cursorColor, setCursorColor] = useState('red');
+  const [isOpen, setIsOpen] = useState(false);
 
   const redRef = useRef<HTMLDivElement>(null);
   const greenRef = useRef<HTMLDivElement>(null);
@@ -52,7 +55,8 @@ export default function SkillsPage() {
       <Navbar />
       <CertificationSection ref={redRef} />
       <ProjectsSection ref={greenRef} />
-      <Footer />
+      <Footer setIsOpen={setIsOpen} />
+      <ContactModal isOpen={isOpen} setIsOpen={setIsOpen} />
     </main>
   );
 }

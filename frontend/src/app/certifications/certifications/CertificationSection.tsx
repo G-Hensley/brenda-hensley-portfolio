@@ -11,7 +11,6 @@ import { Certification } from '@/types/types';
 import { getCertifications } from '@/lib/api';
 import { TypeAnimation } from 'react-type-animation';
 import CertCard from './CertCard';
-import { SkillsScroll } from '../../home/components/SkillScroll';
 import { useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { ScrollText } from 'lucide-react';
@@ -44,7 +43,7 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <section
       id='certs'
-      className='text-white px-8 pt-20 pb-16 gap-12 h-fit flex flex-col items-center relative'
+      className='text-white px-8 pt-24 pb-16 gap-20 min-h-screen h-fit flex flex-col items-center relative'
       ref={ref}
       data-section='green'>
       {/* <div className="absolute inset-0 z-0 bg-dot-fade pointer-events-none" /> */}
@@ -66,13 +65,12 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
         )}
       </div>
 
-      <div className='flex flex-wrap justify-center w-full gap-8 z-10'>
+      <div className='flex flex-wrap justify-center w-full gap-10 z-10 items-center'>
         {certs.map((cert, index) => (
           <CertCard key={cert._id} cert={cert} index={index} />
         ))}
       </div>
 
-      <SkillsScroll />
     </section>
   );
 });

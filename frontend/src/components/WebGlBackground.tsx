@@ -26,7 +26,7 @@ export default function SpacetimeEffect() {
     const dotTexture = new THREE.TextureLoader().load('/dotTexture.png')
 
     const radius = 80
-    const baseGeom = new THREE.IcosahedronGeometry(radius, 18)
+    const baseGeom = new THREE.IcosahedronGeometry(radius, 15)
     const positionAttr = baseGeom.getAttribute('position') as THREE.BufferAttribute
     const numVerts = positionAttr.count
 
@@ -123,7 +123,7 @@ export default function SpacetimeEffect() {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-10 pointer-events-none opacity-40"
+      className="fixed inset-0 z-0 pointer-events-none opacity-40"
       style={{ width: '100%', height: '100%' }}
     />
   )
