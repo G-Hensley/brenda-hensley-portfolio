@@ -3,7 +3,7 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Electrolize } from 'next/font/google';
 import { TypeAnimation } from 'react-type-animation';
-import ProjectCard from '../../../components/ProjectCard';
+import ProjectCard from './ProjectCard';
 import { getProjects } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { motion, useInView } from 'framer-motion';

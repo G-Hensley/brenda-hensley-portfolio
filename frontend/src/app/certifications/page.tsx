@@ -1,17 +1,16 @@
 'use client';
 
 // Import the components
-import { CertificationSection } from './certifications/CertificationSection';
+import { CertificationSection } from './components/CertificationSection';
 import { useEffect, useState, useRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
-import { ProjectsSection } from '@/app/certifications/projects/ProjectsSection';
+import { ProjectsSection } from './components/ProjectsSection';
 import Navbar from '@/components/Navbar';
 import WebGLBackground from '@/components/WebGlBackground';
 import Footer from '@/components/Footer';
 import ContactModal from '@/components/ContactModal';
 
 export default function SkillsPage() {
-
   const [cursorColor, setCursorColor] = useState('red');
   const [isOpen, setIsOpen] = useState(false);
 

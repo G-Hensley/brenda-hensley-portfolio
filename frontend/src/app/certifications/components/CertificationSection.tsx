@@ -70,7 +70,6 @@ export const CertificationSection = forwardRef<HTMLDivElement>((props, ref) => {
           <CertCard key={cert._id} cert={cert} index={index} />
         ))}
       </div>
-
     </section>
   );
 });
