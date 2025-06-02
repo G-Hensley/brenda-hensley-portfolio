@@ -12,6 +12,7 @@ const electrolize = Electrolize({
 });
 
 export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
+  const [isMobile, setIsMobile] = useState(false);
   const typingRef = useRef<HTMLDivElement>(null);
   const [startTyping, setStartTyping] = useState(false);
   const isInView = useInView(typingRef, { once: true });
@@ -23,6 +24,14 @@ export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
     }
   }, [isInView]);
 
+  const windowListener = () => {
+    setIsMobile(window.innerWidth < 768);
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', windowListener);
+  }, []);
+  
   return (
     <section
       ref={ref}
@@ -31,7 +40,7 @@ export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
       <div
         ref={typingRef}
         className={`text-center flex items-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
-        <User className='text-green-600 icon-glow mr-4' size={56} />
+        <User className='text-green-600 icon-glow mr-4' size={isMobile ? 32 : 56} />
         {startTyping && (
           <>
             <TypeAnimation

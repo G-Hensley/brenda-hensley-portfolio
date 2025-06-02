@@ -93,7 +93,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
 
       {!showWhoami && (
         <div
-          className={`text-center text-3xl md:text-4xl lg:text-5xl title-outline text-transparent xl:text-6xl font-mono ${shareTechMono.className}`}>
+          className={`text-center text-4xl md:text-5xl title-outline text-transparent xl:text-6xl font-mono ${shareTechMono.className}`}>
           <TypeAnimation
             sequence={[
               1000,
@@ -114,7 +114,7 @@ export const HeroSection = forwardRef<HTMLDivElement>((props, ref) => {
       )}
 
       <motion.h2
-        className={`mt-4 text-lg md:text-2xl lg:text-3xl xl:text-4xl font-mono text-red-600 ${electrolize.className}`}
+        className={`mt-4 text-lg md:text-2xl lg:text-3xl xl:text-4xl font-mono text-red-600 text-center ${electrolize.className}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{

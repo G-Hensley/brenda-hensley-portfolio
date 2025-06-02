@@ -17,7 +17,7 @@ const electrolize = Electrolize({
 
 export default function AnimatedAboutMe() {
   return (
-    <div className="text-white text-4xl font-bold text-center w-3/4">
+    <div className="text-white text-4xl font-bold text-center lg:w-4/5 xl:w-3/4">
         <div className="grid grid-cols-6 gap-16">
 
             {/* Early Curiosity */}
@@ -25,7 +25,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="col-span-6 md:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative"
+                className="col-span-6 xl:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <BrainCircuit className="text-green-600 icon-glow" size={28} />
@@ -41,7 +41,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 2 }}
-                className="col-span-6 md:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow"
+                className="col-span-6 xl:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <NotebookPen  className="text-green-600 icon-glow" size={28} />
