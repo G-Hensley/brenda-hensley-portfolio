@@ -36,7 +36,7 @@ export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
     <section
       ref={ref}
       id='about'
-      className='relative px-6 pt-20 pb-16 bg-transparent flex flex-col gap-20 items-center min-h-screen h-fit'>
+      className='relative px-8 pt-20 pb-16 bg-transparent flex flex-col gap-10 md:gap-20 items-center min-h-screen h-fit'>
       <div
         ref={typingRef}
         className={`text-center flex items-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
