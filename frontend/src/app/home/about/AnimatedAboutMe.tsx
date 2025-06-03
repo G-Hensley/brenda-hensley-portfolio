@@ -25,7 +25,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 1 }}
-                className="col-span-6 xl:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
+                className="abt-card col-span-6 xl:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <BrainCircuit className="text-green-600 icon-glow" size={28} />
@@ -41,7 +41,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 2 }}
-                className="col-span-6 xl:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
+                className="abt-card col-span-6 xl:col-span-3 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <NotebookPen  className="text-green-600 icon-glow" size={28} />
@@ -57,7 +57,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 2 }}
-                className="col-span-6 xl:col-span-4 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
+                className="abt-card col-span-6 xl:col-span-4 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <GlobeLock className="text-green-600 icon-glow" size={28} />
@@ -73,7 +73,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 2 }}
-                className="col-span-6 lg:col-span-3 xl:col-span-2 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
+                className="abt-card col-span-6 lg:col-span-3 xl:col-span-2 bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow relative backdrop-blur-[2px]"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <BriefcaseBusiness  className="text-green-600 icon-glow" size={28} />
@@ -89,7 +89,7 @@ export default function AnimatedAboutMe() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 2 }}
-                className="bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow col-span-6 lg:col-span-3 xl:col-span-6 relative backdrop-blur-[2px]"
+                className="abt-card bg-zinc-900/30 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4 shadow-glow col-span-6 lg:col-span-3 xl:col-span-6"
             >
               <div className="flex gap-2 w-full justify-center items-center">
                 <Globe className="text-green-600 icon-glow" size={28} />

@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, forwardRef } from 'react';
 import { Electrolize } from 'next/font/google';
 import { useInView } from 'framer-motion';
 import { User } from 'lucide-react';
-
+import TerminalCard from '@/app/home/about/TerminalCard';
 const electrolize = Electrolize({
   weight: ['400'],
   subsets: ['latin'],
@@ -53,7 +53,16 @@ export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
           </>
         )}
       </div>
-      <AnimatedAboutMe />
+      {/* <AnimatedAboutMe /> */}
+      <TerminalCard
+        filename="curiosity.log"
+        lines={[
+          '> Log opened...',
+          '2005: BIOS lock bypassed.',
+          'First exposure to hardware hacking.',
+          'Spark ignited 🔥',
+        ]}
+      />
     </section>
   );
 });
