@@ -1,10 +1,11 @@
 import { TypeAnimation } from 'react-type-animation';
-import AnimatedAboutMe from './AnimatedAboutMe';
+// import AnimatedAboutMe from './AnimatedAboutMe';
 import { useRef, useState, useEffect, forwardRef } from 'react';
 import { Electrolize } from 'next/font/google';
 import { useInView } from 'framer-motion';
 import { User } from 'lucide-react';
 import TerminalCard from '@/app/home/about/TerminalCard';
+
 const electrolize = Electrolize({
   weight: ['400'],
   subsets: ['latin'],
@@ -36,7 +37,7 @@ export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
     <section
       ref={ref}
       id='about'
-      className='relative px-8 pt-20 pb-16 bg-transparent flex flex-col gap-10 md:gap-20 items-center min-h-screen h-fit'>
+      className='relative px-8 pt-20 pb-16 bg-transparent flex flex-col gap-10 items-center min-h-screen h-fit'>
       <div
         ref={typingRef}
         className={`text-center flex items-center text-3xl md:text-6xl text-green-600 text-glow ${electrolize.className} z-10`}>
@@ -54,15 +55,7 @@ export const AboutSection = forwardRef<HTMLDivElement>((props, ref) => {
         )}
       </div>
       {/* <AnimatedAboutMe /> */}
-      <TerminalCard
-        filename="curiosity.log"
-        lines={[
-          '> Log opened...',
-          '2005: BIOS lock bypassed.',
-          'First exposure to hardware hacking.',
-          'Spark ignited 🔥',
-        ]}
-      />
+      <TerminalCard />
     </section>
   );
 });
