@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from 'react';
 import { CursorGlow } from '@/components/CursorGlow';
 import { AboutSection } from '@/app/home/about/AboutSection';
 import MatrixBackground from '@/components/MatrixBg';
+import { SkillsScroll } from './components/SkillsScroll';
 
 export default function Home() {
   // cursor glow color
@@ -47,11 +48,12 @@ export default function Home() {
   }, []);
 
   return (
-    <main className='min-h-fit bg-zinc-950 z-0'>
+    <main className='min-h-fit bg-neutral-950 z-0'>
       <MatrixBackground />
       <CursorGlow color={cursorColor} />
       <HeroSection ref={redRef} />
       <AboutSection ref={greenRef} />
+      <SkillsScroll/>
     </main>
   );
 }

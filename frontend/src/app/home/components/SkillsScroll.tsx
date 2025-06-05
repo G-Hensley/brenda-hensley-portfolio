@@ -21,11 +21,7 @@ export function SkillsScroll() {
   const loopedSkills = [...skills, ...skills, ...skills, ...skills];
 
   return (
-    <section className="relative w-3/4 overflow-hidden">
-
-      {/* Fading edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent rounded-l-2xl" />
-      <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none bg-gradient-to-l from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent rounded-r-2xl" />
+    <section className="relative w-full overflow-hidden">
 
       {/* CSS-based animated scroll */}
       <div className="overflow-hidden whitespace-nowrap py-8">
@@ -34,10 +30,6 @@ export function SkillsScroll() {
             <motion.div
               initial={{ opacity: 0, scale: 0.2 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              whileHover={{
-                scale: 1.1,
-                boxShadow: '0 0 20px #ff0000aa',
-              }}
               transition={{ type: 'spring', stiffness: 120, damping: 50, delay: index * 0.05, duration: 0.5 }}
               key={`${skill._id || skill.title}-${index}`}
               viewport={{ once: true }}

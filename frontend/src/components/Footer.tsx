@@ -21,11 +21,11 @@ export default function Footer( {setIsOpen}: {setIsOpen: (isOpen: boolean) => vo
 
         <div className="flex-col flex items-center gap-4">
           <p className={`text-center text-2xl ${electrolize.className}`}>Socials</p>
-          <Link href="https://www.linkedin.com/in/brenda-hensley-/" target="_blank" className="text-green-500 hover:text-green-200 drop-shadow-sm drop-shadow-green-500/20
+          <Link href="https://github.com/b-hensley" target="_blank" className="text-green-500 hover:text-green-200 drop-shadow-sm drop-shadow-green-500/20
           ">
             <FiGithub className="hover:scale-115 transition-all duration-300 active:scale-100" size={32} />
           </Link>
-          <Link href="https://github.com/b-hensley" target="_blank" className="text-green-500 hover:text-green-200 drop-shadow-sm drop-shadow-green-500/20
+          <Link href="https://www.linkedin.com/in/brenda-hensley-/" target="_blank" className="text-green-500 hover:text-green-200 drop-shadow-sm drop-shadow-green-500/20
           ">
             <FiLinkedin className="hover:scale-115 transition-all duration-300 active:scale-100" size={32} />
           </Link>
